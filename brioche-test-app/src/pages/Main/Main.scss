@@ -1,5 +1,5 @@
 .main {
-  background-color:#ffffff
+  background-color: #ffffff;
 }
 .main_hero {
   position: relative;
@@ -21,27 +21,53 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  margin: 0 auto 25px;
-}
-
-.main_filters span {
-  font-size: 7px;
-  color: #9a9a9a;
-}
-
-.main_filters button {
-  border: 1px solid #ededed;
+  gap: 12px;
+  margin: 0 auto 30px;
+  border: 1px solid #dddddd;
   border-radius: 999px;
+  min-height: 48px;
+  width: fit-content;
+  max-width: calc(100% - 32px);
+  padding: 0 28px;
   background: #ffffff;
-  color: #cf95b8;
-  font-size: 7px;
-  line-height: 1;
-  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+.main_filters_text {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  color: #6f6f6f;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.main_filters_option {
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  appearance: none;
+  background: transparent;
+  font-family: inherit;
+  color: #cf95b8;
+  font-size: 13px;
+  line-height: 1;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
   cursor: pointer;
+}
+
+@media (max-width: 520px) {
+  .main_filters {
+    gap: 6px;
+    min-height: 40px;
+    padding: 0 16px;
+  }
+
+  .main_filters_text,
+  .main_filters_option {
+    font-size: 11px;
+  }
 }
 
 .main_grid {
@@ -50,15 +76,20 @@
   justify-content: center;
   column-gap: 60px;
   row-gap: 85px;
-
 }
 
 .card_img_wrap {
   overflow: hidden;
+  border-radius: 4px;
 }
 
 .card img {
+  display: block;
+  width: 100%;
+  border-radius: inherit;
   object-fit: cover;
+  transform: scale(1);
+  image-rendering: -webkit-optimize-contrast;
   transition: transform 0.35s ease;
   transform-origin: center;
 }
@@ -67,7 +98,7 @@
   margin: 35px 0 0;
   font-size: 16.6px;
   line-height: 1.35;
-  color: #5e5e5e;
+  color: #000000;
   font-weight: 400;
 }
 
@@ -87,11 +118,13 @@
 .card_price {
   position: absolute;
   inset: 0 auto auto 0;
-  color: #5f5f5f;
+  color: #1c1c1c;
   font-weight: 700;
   opacity: 1;
   transform: translateX(0);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
 .card_cta {
@@ -103,11 +136,13 @@
   opacity: 0;
   transform: translateX(-10px);
   pointer-events: none;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
 .card:hover img {
-  transform: scale(1.06);
+  transform: scale(1.04);
 }
 
 .card:hover .card_price {

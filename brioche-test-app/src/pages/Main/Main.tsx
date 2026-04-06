@@ -1,4 +1,4 @@
-import Layout from '../../components/layout/Layout';
+﻿import Layout from '../../components/layout/Layout';
 import './Main.scss';
 import Background from '../../assets/images/Background.svg';
 import cakeLilac from '../../assets/images/product-cake-lilac.png';
@@ -25,8 +25,8 @@ const products = [
   { title: 'Торт с бантиками', price: 'от 4,850 ₽', image: cakeBows },
   { title: 'Коробка ванильных капкейков с цветами', price: 'от 2,800 ₽', image: kulichWhite },
   { title: 'Набор макарон', price: '6,500 ₽', image: kulichCream },
-  { title: 'Пасхальный кулич с макароном и клубничным кремом', price: '6,500 ₽', image: macaronsBox,},
-  { title: 'Пасхальный кулич с макароном и клубничным кремом',price: '6,500 ₽',image: kulichFlowers,},
+  { title: 'Пасхальный кулич с макароном и клубничным кремом', price: '6,500 ₽', image: macaronsBox },
+  { title: 'Пасхальный кулич с макароном и клубничным кремом', price: '6,500 ₽', image: kulichFlowers },
 ];
 
 const Main = () => {
@@ -38,10 +38,13 @@ const Main = () => {
         </section>
         <section className="main_products" id="menu">
           <div className="main_filters">
-            <span>Сортировать по</span>
-            <button type="button">
-              новинкам
-              <span>▾</span>
+            <span className="main_filters_text">Сортировать по</span>
+            <button className="main_filters_option" type="button">
+              новизне
+            </button>
+            <span className="main_filters_text">или</span>
+            <button className="main_filters_option" type="button">
+              цене
             </button>
           </div>
 
@@ -72,3 +75,4 @@ const Main = () => {
 };
 
 export default Main;
+
