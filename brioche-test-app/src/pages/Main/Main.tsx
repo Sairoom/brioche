@@ -1,6 +1,6 @@
 import Layout from '../../components/layout/Layout';
 import './Main.scss';
-import heroBackground from '../../assets/images/hero-bg.png';
+import Background from '../../assets/images/Background.svg';
 import cakeLilac from '../../assets/images/product-cake-lilac.png';
 import cakeDriedFlowers from '../../assets/images/product-cake-dried-flowers.png';
 import cakeMimosa from '../../assets/images/product-cake-mimosa.png';
@@ -14,7 +14,7 @@ import kulichCream from '../../assets/images/product-macarons-box.png';
 import kulichWhite from '../../assets/images/product-kulich-cupcake-1.png';
 import kulichFlowers from '../../assets/images/product-kulich-cupcake-2.png';
 
-const PRODUCTS = [
+const products = [
   { title: 'Торт с кремовой сиренью', price: 'от 5,950 ₽', image: cakeLilac },
   { title: 'Торт с ассорти из сухоцветов', price: 'от 4,800 ₽', image: cakeDriedFlowers },
   { title: 'Торт с кремовой мимозой', price: 'от 5,850 ₽', image: cakeMimosa },
@@ -25,28 +25,19 @@ const PRODUCTS = [
   { title: 'Торт с бантиками', price: 'от 4,850 ₽', image: cakeBows },
   { title: 'Коробка ванильных капкейков с цветами', price: 'от 2,800 ₽', image: kulichWhite },
   { title: 'Набор макарон', price: '6,500 ₽', image: kulichCream },
-  {
-    title: 'Пасхальный кулич с макароном и клубничным кремом',
-    price: '6,500 ₽',
-    image: macaronsBox,
-  },
-  {
-    title: 'Пасхальный кулич с макароном и клубничным кремом',
-    price: '6,500 ₽',
-    image: kulichFlowers,
-  },
-] as const;
+  { title: 'Пасхальный кулич с макароном и клубничным кремом', price: '6,500 ₽', image: macaronsBox,},
+  { title: 'Пасхальный кулич с макароном и клубничным кремом',price: '6,500 ₽',image: kulichFlowers,},
+];
 
 const Main = () => {
   return (
     <Layout>
-      <main className="main-page">
-        <section className="main-page__hero" aria-label="Hero">
-          <img src={heroBackground} alt="" />
+      <main className="main">
+        <section className="main_hero">
+          <img src={Background} />
         </section>
-
-        <section className="main-page__products" id="menu">
-          <div className="main-page__filters">
+        <section className="main_products" id="menu">
+          <div className="main_filters">
             <span>Сортировать по</span>
             <button type="button">
               новинкам
@@ -54,24 +45,24 @@ const Main = () => {
             </button>
           </div>
 
-          <div className="container main-page__grid">
-            {PRODUCTS.map((product, index) => (
-              <article className="product-card" key={product.title + product.price + index}>
+          <div className="container main_grid">
+            {products.map((product, index) => (
+              <article className="card" key={product.title + product.price + index}>
                 <a href="/">
-                  <div className="product-card__image-wrap">
+                  <div className="card_img_wrap">
                     <img src={product.image} alt={product.title} />
                   </div>
                   <h3>{product.title}</h3>
-                  <div className="product-card__meta">
-                    <p className="product-card__price">{product.price}</p>
-                    <p className="product-card__cta">В корзину</p>
+                  <div className="card_meta">
+                    <p className="card_price">{product.price}</p>
+                    <p className="card_cta">В корзину</p>
                   </div>
                 </a>
               </article>
             ))}
           </div>
 
-          <div className="main-page__more">
+          <div className="main_more">
             <a href="/">Больше десертов</a>
           </div>
         </section>

@@ -1,14 +1,15 @@
 import './Header.scss';
-import phone from '../../assets/images/phone.png';
-import tg from '../../assets/images/tg.png';
-import korz from '../../assets/images/korz.png';
+import phone from '../../assets/images/phonev.svg';
+import tg from '../../assets/images/tgv.svg';
+import korz from '../../assets/images/korzv.svg';
+import arrow from '../../assets/images/arrow.svg';
 
-const TOP_LINKS = ['Меню ресторана', 'Бронь столика', 'Доставка'];
+const top_links = ['Как заказать?', 'Бронь столика', 'Доставка'];
 
-const NAV_ITEMS = [
+const nav_items = [
   {
     title: 'Пасха',
-    links: ['Куличи', 'Творожная пасха', 'Наборы', 'Все пасхальное'],
+    links: []
   },
   {
     title: 'Солёное',
@@ -32,53 +33,61 @@ const NAV_ITEMS = [
   },
 ] as const;
 
+const pasxa_path = '/pasxa';
+
 const Header = () => {
   return (
-    <header className="site-header">
-      <div className="container site-header__top">
-        <ul className="site-header__mini-links">
-          {TOP_LINKS.map((item) => (
+    <header className="header">
+      <div className="container header_top">
+        <ul className="header_links">
+          {top_links.map((item) => (
             <li key={item}>
-              <a href="/">{item}</a>
+              <a>{item}</a>
             </li>
           ))}
         </ul>
 
-        <a className="site-header__logo" href="/" aria-label="Brioche">
+        <a className="header_logo" href="/">
           Brioche
         </a>
 
-        <div className="site-header__actions">
-          <a className="site-header-time" href="/">
+        <div className="header_actions">
+          <a className="header_time" href="/">
             с 9:00 до 22:00
           </a>
           <button type="button">
-            <img src={phone} />
+            <img src={phone}/>
           </button>
           <button type="button">
-            <img src={tg} />
+            <img src={tg}/>
           </button>
           <button type="button">
-            <img src={korz} />
+            <img src={korz}/>
           </button>
         </div>
       </div>
 
-      <div className="site-header__bottom">
-        <nav className="container site-header__menu" aria-label="Main Navigation">
-          {NAV_ITEMS.map((item) => (
-            <div className="menu-item" key={item.title}>
-              <button className="menu-item__trigger" type="button">
-                {item.title}
-                <span>⌄</span>
-              </button>
-              <div className="menu-item__dropdown">
-                {item.links.map((link) => (
-                  <a href="#menu" key={link}>
-                    {link}
-                  </a>
-                ))}
-              </div>
+      <div className="header_bottom">
+        <nav className="container header_menu">
+          {nav_items.map((item, index) => (
+            <div className="menu_item" key={item.title}>
+              {index === 0 ? (
+                <a className="menu_item_trigger" href={pasxa_path}>
+                  {item.title}
+                </a>): 
+                (<><button className="menu_item_trigger" type="button">
+                    {item.title}
+                    <img className="menu_item_arrow" src={arrow} />
+                  </button>
+                  <div className="menu_item_dropdown">
+                    {item.links.map((link) => (
+                      <a href="#menu" key={link}>
+                        {link}
+                      </a>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </nav>
