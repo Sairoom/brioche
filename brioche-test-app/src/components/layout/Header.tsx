@@ -9,7 +9,7 @@ const top_links = ['Как заказать?', 'Бронь столика', 'Д�
 const nav_items = [
   {
     title: 'Пасха',
-    links: []
+    links: [],
   },
   {
     title: 'Солёное',
@@ -20,16 +20,16 @@ const nav_items = [
     links: ['Конфеты', 'Кексы', 'Десерты', 'Торты'],
   },
   {
+    title: 'Торты',
+    links: ['Стандартные торты', 'Торты на заказ', 'Мини-торты', 'Все торты'],
+  },
+  {
     title: 'Напитки',
     links: ['Кофе', 'Лимонады', 'Коктейли', 'Листовые чаи', 'Фруктовые чаи'],
   },
   {
-    title: 'Посуда',
-    links: ['Посуда', 'Свечи', 'Диффузоры', 'Скидки'],
-  },
-  {
     title: 'Коллекция',
-    links: ['Подарочные наборы', 'Сезонные подборки', 'Новые позиции', 'Скидки'],
+    links: ['Посуда', 'Свечи', 'Диффузоры', 'Скидки'],
   },
 ] as const;
 
@@ -56,13 +56,13 @@ const Header = () => {
             с 9:00 до 22:00
           </a>
           <button type="button">
-            <img src={phone}/>
+            <img src={phone} />
           </button>
           <button type="button">
-            <img src={tg}/>
+            <img src={tg} />
           </button>
           <button type="button">
-            <img src={korz}/>
+            <img src={korz} />
           </button>
         </div>
       </div>
@@ -74,8 +74,10 @@ const Header = () => {
               {index === 0 ? (
                 <a className="menu_item_trigger" href={pasxa_path}>
                   {item.title}
-                </a>): 
-                (<><button className="menu_item_trigger" type="button">
+                </a>
+              ) : (
+                <>
+                  <button className="menu_item_trigger" type="button">
                     {item.title}
                     <img className="menu_item_arrow" src={arrow} />
                   </button>
