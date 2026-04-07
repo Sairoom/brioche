@@ -21,13 +21,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
   margin: 0 auto 30px;
   border: 1px solid #dddddd;
   border-radius: 999px;
-  min-height: 48px;
+  min-height: 31px;
   width: fit-content;
-  max-width: calc(100% - 32px);
+  max-width: 287px;
   padding: 0 28px;
   background: #ffffff;
   white-space: nowrap;
@@ -44,17 +43,32 @@
 .main_filters_option {
   display: inline-flex;
   align-items: center;
-  border: none;
-  appearance: none;
+  gap: 4px;
+  border: 0;
   background: transparent;
   font-family: inherit;
-  color: #cf95b8;
+  color: #CD87AF;
   font-size: 13px;
   line-height: 1;
-  padding: 0;
   text-decoration: underline;
   text-underline-offset: 2px;
   cursor: pointer;
+}
+
+.main_filters_option.is_active {
+  color: #000000;
+  text-decoration: none;
+}
+
+.main_filters_arrow {
+  width: 7px;
+  height: 4px;
+  display: block;
+  transition: transform 0.2s ease;
+}
+
+.main_filters_arrow.is_up {
+  transform: rotate(180deg);
 }
 
 @media (max-width: 520px) {
@@ -162,7 +176,8 @@
 }
 
 .main_more a {
-  color: #d2aac4;
+  color: #CD87AF;
   font-size: 15px;
   text-decoration: underline;
+  text-underline-offset: 5px;
 }

@@ -1,56 +1,128 @@
-﻿import Layout from '../../components/layout/Layout';
+import { useMemo, useState } from 'react';
+import Layout from '../../components/layout/Layout';
 import './Main.scss';
 import Background from '../../assets/images/Background.svg';
-import cakeLilac from '../../assets/images/product-cake-lilac.png';
-import cakeDriedFlowers from '../../assets/images/product-cake-dried-flowers.png';
-import cakeMimosa from '../../assets/images/product-cake-mimosa.png';
-import cakeCornflower from '../../assets/images/product-cake-cornflower.png';
-import cakeMacaronsWreath from '../../assets/images/product-cake-macarons-wreath.png';
-import cakeFlowers from '../../assets/images/product-cake-flowers.png';
-import cakePavlovaWreath from '../../assets/images/product-cake-pavlova-wreath.png';
-import cakeBows from '../../assets/images/product-cake-bows.png';
-import macaronsBox from '../../assets/images/product-kulich-white.png';
-import kulichCream from '../../assets/images/product-macarons-box.png';
-import kulichWhite from '../../assets/images/product-kulich-cupcake-1.png';
-import kulichFlowers from '../../assets/images/product-kulich-cupcake-2.png';
+import Siren from '../../assets/images/siren.png';
+import Suxoch from '../../assets/images/suxoch.png';
+import Mimosa from '../../assets/images/mimosa.png';
+import Vasilk from '../../assets/images/vasilk.png';
+import MacaronCake from '../../assets/images/venok_mak.png';
+import cakeFlowers from '../../assets/images/flowers_cake.png';
+import PavlovaCake from '../../assets/images/pavl_cake.png';
+import Bant from '../../assets/images/bant_cake.png';
+import Cupcakes from '../../assets/images/cupcakes.png';
+import Macarons from '../../assets/images/macarons.png';
+import LimonKul from '../../assets/images/limon_kul.png';
+import KlubKul from '../../assets/images/klub_kul.png';
+import sortIcon from '../../assets/images/sort.svg';
+
+const parse_price = (value: string) => Number(value.replace(/[^\d]/g, ''));
 
 const products = [
-  { title: 'Торт с кремовой сиренью', price: 'от 5,950 ₽', image: cakeLilac },
-  { title: 'Торт с ассорти из сухоцветов', price: 'от 4,800 ₽', image: cakeDriedFlowers },
-  { title: 'Торт с кремовой мимозой', price: 'от 5,850 ₽', image: cakeMimosa },
-  { title: 'Торт с васильками', price: 'от 4,750 ₽', image: cakeCornflower },
-  { title: 'Торт с венком из макарон', price: 'от 5,550 ₽', image: cakeMacaronsWreath },
-  { title: 'Торт с цветами', price: 'от 6,640 ₽', image: cakeFlowers },
-  { title: 'Торт Павлова. Венок', price: 'от 8,200 ₽', image: cakePavlovaWreath },
-  { title: 'Торт с бантиками', price: 'от 4,850 ₽', image: cakeBows },
-  { title: 'Коробка ванильных капкейков с цветами', price: 'от 2,800 ₽', image: kulichWhite },
-  { title: 'Набор макарон', price: '6,500 ₽', image: kulichCream },
-  { title: 'Пасхальный кулич с макароном и клубничным кремом', price: '6,500 ₽', image: macaronsBox },
-  { title: 'Пасхальный кулич с макароном и клубничным кремом', price: '6,500 ₽', image: kulichFlowers },
-];
+  { title: 'Торт с кремовой сиренью', price: 'от 5,950 ₽', image: Siren },
+  { title: 'Торт с ассорти из сухоцветов', price: 'от 4,800 ₽', image: Suxoch },
+  { title: 'Торт с кремовой мимозой', price: 'от 5,950 ₽', image: Mimosa },
+  { title: 'Торт с васильками', price: 'от 4,750 ₽', image: Vasilk },
+  { title: 'Торт с венком из макарон', price: 'от 5,550 ₽', image: MacaronCake },
+  { title: 'Торт с цветами', price: 'от 5,640 ₽', image: cakeFlowers },
+  { title: 'Торт Павлова. Венок', price: 'от 5,200 ₽', image: PavlovaCake },
+  { title: 'Торт с бантиками', price: 'от 4,850 ₽', image: Bant },
+  { title: 'Коробка ванильных капкейков с цветами', price: 'от 2,600 ₽', image: Cupcakes },
+  { title: 'Набор макарон', price: 'от 1,240 ₽', image: Macarons },
+  { title: 'Пасхальный кулич в меренге с лимонным курдом', price: '4,900 ₽', image: LimonKul },
+  { title: 'Пасхальный кулич с макароном и клубничным кремом', price: '6,500 ₽', image: KlubKul },
+] as const;
+
+const productsBase = products.map((product, baseIndex) => ({
+  ...product,
+  baseIndex,
+  priceValue: parse_price(product.price),
+}));
+
+type SortType = 'new' | 'price' | null;
 
 const Main = () => {
+  const [sortType, setSortType] = useState<SortType>(null);
+  const [newReversed, setNewReversed] = useState(false);
+  const [priceReversed, setPriceReversed] = useState(false);
+
+  const onNewClick = () => {
+    if (sortType === 'new') {
+      setNewReversed((prev) => !prev);
+      return;
+    }
+
+    setSortType('new');
+    setNewReversed(false);
+  };
+
+  const onPriceClick = () => {
+    if (sortType === 'price') {
+      setPriceReversed((prev) => !prev);
+      return;
+    }
+
+    setSortType('price');
+    setPriceReversed(false);
+  };
+
+  const shownProducts = useMemo(() => {
+    if (sortType === 'new') {
+      return newReversed ? [...productsBase].reverse() : productsBase;
+    }
+
+    if (sortType === 'price') {
+      const sorted = [...productsBase].sort((a, b) => a.priceValue - b.priceValue);
+      return priceReversed ? sorted.reverse() : sorted;
+    }
+
+    return productsBase;
+  }, [sortType, newReversed, priceReversed]);
+
   return (
     <Layout>
       <main className="main">
         <section className="main_hero">
-          <img src={Background} />
+          <img src={Background} alt="" />
         </section>
+
         <section className="main_products" id="menu">
           <div className="main_filters">
             <span className="main_filters_text">Сортировать по</span>
-            <button className="main_filters_option" type="button">
+            <button
+              className={`main_filters_option${sortType === 'new' ? ' is_active' : ''}`}
+              type="button"
+              onClick={onNewClick}
+            >
               новизне
+              {sortType === 'new' && (
+                <img
+                  className={`main_filters_arrow${newReversed ? ' is_up' : ''}`}
+                  src={sortIcon}
+                  alt=""
+                />
+              )}
             </button>
             <span className="main_filters_text">или</span>
-            <button className="main_filters_option" type="button">
+            <button
+              className={`main_filters_option${sortType === 'price' ? ' is_active' : ''}`}
+              type="button"
+              onClick={onPriceClick}
+            >
               цене
+              {sortType === 'price' && (
+                <img
+                  className={`main_filters_arrow${priceReversed ? ' is_up' : ''}`}
+                  src={sortIcon}
+                  alt=""
+                />
+              )}
             </button>
           </div>
 
           <div className="container main_grid">
-            {products.map((product, index) => (
-              <article className="card" key={product.title + product.price + index}>
+            {shownProducts.map((product) => (
+              <article className="card" key={product.baseIndex}>
                 <a href="/">
                   <div className="card_img_wrap">
                     <img src={product.image} alt={product.title} />
@@ -66,7 +138,7 @@ const Main = () => {
           </div>
 
           <div className="main_more">
-            <a href="/">Больше десертов</a>
+            <a href="/">Больше красоты</a>
           </div>
         </section>
       </main>
@@ -75,4 +147,3 @@ const Main = () => {
 };
 
 export default Main;
-
