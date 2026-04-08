@@ -5,7 +5,7 @@ import korz from '../../assets/images/korzv.svg';
 import arrow from '../../assets/images/arrow.svg';
 
 const top_links = [
-  { label: 'Как заказать?', href: '/' },
+  { label: 'Как заказать?', href: '/how-to-order' },
   { label: 'Бронь столика', href: '/' },
   { label: 'Доставка', href: '/delivery' },
 ] as const;
@@ -103,3 +103,4 @@ const Header = () => {
 };
 
 export default Header;
+

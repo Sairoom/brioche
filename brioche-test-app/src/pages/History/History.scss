@@ -1,12 +1,12 @@
-.project_history {
+﻿.history {
   background: #ffffff;
 }
 
-.project_history .container {
+.history .container {
   width: min(1300px, calc(100% - 84px));
 }
 
-.project_history_content {
+.history_content {
   display: flex;
   align-items: flex-start;
   gap: 62px;
@@ -14,15 +14,15 @@
   padding-bottom: 190px;
 }
 
-.project_history_sidebar {
+.history_sidebar {
   width: 174px;
   min-width: 174px;
   border-right: 1px solid #dddddd;
   padding-right: 225px;
-  min-height: 829px;
+  min-height: 750px;
 }
 
-.project_history_main {
+.history_main {
   max-width: 898px;
   margin-left: 38px;
   font-size: 16px;
@@ -30,32 +30,32 @@
   color: rgba(0, 0, 0, 0.75);
 }
 
-.project_history_main p {
+.history_main p {
   margin: 0 0 14px;
 }
 
-.project_history_main p:last-child {
+.history_main p:last-child {
   margin-bottom: 0;
 }
 
-.project_history_accent {
+.history_accent {
   color: rgba(181, 113, 152, 0.75);
   font-weight: 500;
 }
 
-.project_history_list {
+.history_list {
   margin: 0 0 16px 20px;
   padding: 0;
 }
 
-.project_history_list li {
+.history_list li {
   margin-bottom: 6px;
 }
 
-.project_history_list li:last-child {
+.history_list li:last-child {
   margin-bottom: 0;
 }
 
-.project_history_list li::marker {
+.history_list li::marker {
   color: #b57198;
 }
