@@ -1,0 +1,22 @@
+.side_bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.side_bar_link {
+  font-size: 18px;
+  color: #000000;
+  line-height: 1.5;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.side_bar_link:hover {
+  color: #cd87af;
+}
+
+.side_bar_link.is_active {
+  color: #b57198;
+}

@@ -9,7 +9,7 @@ const Footer = () => (
         <nav className="footer_links">
           <a href="/">О магазине</a>
           <a href="/">Как заказать</a>
-          <a href="/">Доставка</a>
+          <a href="/delivery">Доставка</a>
           <a href="/">Оплата</a>
           <a href="/">История проекта</a>
           <a href="/">Контакты</a>

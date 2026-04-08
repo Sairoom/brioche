@@ -138,7 +138,7 @@ const Main = () => {
           </div>
 
           <div className="main_more">
-            <a href="/">Больше красоты</a>
+            <a>Больше красоты</a>
           </div>
         </section>
       </main>

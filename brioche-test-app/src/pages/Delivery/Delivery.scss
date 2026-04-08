@@ -1,0 +1,53 @@
+.delivery {
+  background: #ffffff;
+}
+
+.delivery .container {
+  width: min(1300px, calc(100% - 84px));
+}
+
+.delivery_content {
+  display: flex;
+  align-items: flex-start;
+  gap: 62px;
+  padding-top: 60px;
+  padding-bottom: 190px;
+}
+
+.delivery_sidebar {
+  width: 174px;
+  min-width: 174px;
+  border-right: 1px solid #dddddd;
+  padding-right: 225px;
+  min-height: 1270px;
+}
+
+.delivery_block {
+  margin-bottom: 36px;
+  margin-left: 38px;
+}
+
+.delivery_block h2 {
+  margin: 0 0 17px;
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: black;
+}
+
+.delivery_block p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.35;
+  color: black;
+  white-space: pre-line;
+}
+
+.delivery_map {
+  display: block;
+  width: 100%;
+  max-width: 870px;
+  height: auto;
+  margin-top: 70px;
+  margin-left: 38px;
+}

@@ -4,7 +4,11 @@ import tg from '../../assets/images/tgv.svg';
 import korz from '../../assets/images/korzv.svg';
 import arrow from '../../assets/images/arrow.svg';
 
-const top_links = ['Как заказать?', 'Бронь столика', 'Доставка'];
+const top_links = [
+  { label: 'Как заказать?', href: '/' },
+  { label: 'Бронь столика', href: '/' },
+  { label: 'Доставка', href: '/delivery' },
+] as const;
 
 const nav_items = [
   {
@@ -41,8 +45,8 @@ const Header = () => {
       <div className="container header_top">
         <ul className="header_links">
           {top_links.map((item) => (
-            <li key={item}>
-              <a>{item}</a>
+            <li key={item.label}>
+              <a href={item.href}>{item.label}</a>
             </li>
           ))}
         </ul>
@@ -52,7 +56,7 @@ const Header = () => {
         </a>
 
         <div className="header_actions">
-          <a className="header_time" href="/">
+          <a className="header_time">
             с 9:00 до 22:00
           </a>
           <button type="button">

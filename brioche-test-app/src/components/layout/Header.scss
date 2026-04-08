@@ -1,5 +1,4 @@
 .header {
-  border-bottom: 1px solid #e8e8e8;
   background: #ffffff;
   position: relative;
   z-index: 20;
@@ -83,6 +82,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+  transition: filter 0.2s ease;
 }
 
 .header_bottom {
@@ -207,6 +207,10 @@
 
 .header_actions button:hover {
   color: #cd87af;
+}
+
+.header_actions button:hover img {
+  filter: brightness(0) saturate(100%) invert(66%) sepia(27%) saturate(560%) hue-rotate(282deg) brightness(90%) contrast(90%);
 }
 
 .header_actions button:active,
