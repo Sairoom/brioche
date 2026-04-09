@@ -1,0 +1,183 @@
+.reserve {
+  background: #f4f4f4;
+}
+
+.reserve .container {
+  width: min(1300px, calc(100% - 84px));
+}
+
+.reserve_hero {
+  position: relative;
+  width: 100%;
+  height: 374px;
+  overflow: hidden;
+}
+
+.reserve_hero_placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 14px 18px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  background:
+    linear-gradient(rgba(20, 12, 8, 0.28), rgba(20, 12, 8, 0.28)),
+    linear-gradient(120deg, #3f2a1c 0%, #6f4b2f 46%, #2c1b11 100%),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0 14px, transparent 14px 28px);
+}
+
+.reserve_hero_overlay {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.reserve_hero_overlay h1 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.1;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.reserve_form_section {
+  background: #f4f4f4;
+}
+
+.reserve_content {
+  display: flex;
+  justify-content: center;
+  padding-top: 32px;
+  padding-bottom: 190px;
+}
+
+.reserve_form {
+  width: 521px;
+  margin: 0 auto;
+}
+
+.reserve_hint {
+  margin: 0 0 24px;
+  font-size: 16px;
+  line-height: 1.2;
+  color: #909090;
+  text-align: center;
+}
+
+.reserve_group_title {
+  margin: 0 0 12px;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: #2f2f2f;
+}
+
+.reserve_row {
+  display: grid;
+  grid-template-columns: 250px 250px;
+  column-gap: 21px;
+  width: 521px;
+  margin-bottom: 22px;
+}
+
+.reserve_field {
+  width: 521px;
+  margin-bottom: 22px;
+}
+
+.reserve_row .reserve_field {
+  width: 250px;
+  margin-bottom: 0;
+}
+
+.reserve_field input,
+.reserve_field textarea {
+  width: 100%;
+  border: 1px solid #d7d7d7;
+  background: #ececec;
+  font-family: inherit;
+  font-size: 30px;
+  line-height: 1.2;
+  color: #2f2f2f;
+  outline: none;
+  transition: border-color 0.2s ease;
+  border-radius: 3px;
+}
+
+.reserve_field input {
+  height: 47px;
+  padding: 0 12px;
+}
+
+.reserve_field textarea {
+  height: 120px;
+  resize: none;
+  padding: 12px;
+  line-height: 1.25;
+}
+
+.reserve_field input::placeholder,
+.reserve_field textarea::placeholder {
+  color: #9f9f9f;
+  font-size: 16px;
+}
+
+.reserve_field input:focus,
+.reserve_field textarea:focus {
+  border-color: #cd87af;
+  background: #f6f6f6;
+}
+
+.reserve_checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 24px;
+  cursor: pointer;
+}
+
+.reserve_checkbox input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #cd87af;
+}
+
+.reserve_checkbox span {
+  font-size: 12px;
+  color: #808080;
+}
+
+.reserve_actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reserve_actions button {
+  border: 1px solid #cd87af;
+  background: transparent;
+  color: #cd87af;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: opacity 0.2s ease;
+}
+
+.reserve_actions button:hover {
+  opacity: 0.75;
+}
+
+.reserve_success {
+  margin: 0;
+  font-size: 12px;
+  color: #6a6a6a;
+}

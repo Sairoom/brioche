@@ -6,7 +6,7 @@ import arrow from '../../assets/images/arrow.svg';
 
 const top_links = [
   { label: 'Как заказать?', href: '/how-to-order' },
-  { label: 'Бронь столика', href: '/' },
+  { label: 'Бронь столика', href: '/reserve' },
   { label: 'Доставка', href: '/delivery' },
 ] as const;
 
