@@ -1,20 +1,20 @@
 import { useMemo, useState } from 'react';
 import Layout from '../../components/layout/Layout';
 import './Main.scss';
-import Background from '../../assets/images/Background.svg';
-import Siren from '../../assets/images/siren.png';
-import Suxoch from '../../assets/images/suxoch.png';
-import Mimosa from '../../assets/images/mimosa.png';
-import Vasilk from '../../assets/images/vasilk.png';
-import MacaronCake from '../../assets/images/venok_mak.png';
-import cakeFlowers from '../../assets/images/flowers_cake.png';
-import PavlovaCake from '../../assets/images/pavl_cake.png';
-import Bant from '../../assets/images/bant_cake.png';
-import Cupcakes from '../../assets/images/cupcakes.png';
-import Macarons from '../../assets/images/macarons.png';
-import LimonKul from '../../assets/images/limon_kul.png';
-import KlubKul from '../../assets/images/klub_kul.png';
-import sortIcon from '../../assets/images/sort.svg';
+import Background from '../../assets/images/Main/Background.svg';
+import Siren from '../../assets/images/Main/siren.png';
+import Suxoch from '../../assets/images/Main/suxoch.png';
+import Mimosa from '../../assets/images/Main/mimosa.png';
+import Vasilk from '../../assets/images/Main/vasilk.png';
+import MacaronCake from '../../assets/images/Main/venok_mak.png';
+import cakeFlowers from '../../assets/images/Main/flowers_cake.png';
+import PavlovaCake from '../../assets/images/Main/pavl_cake.png';
+import Bant from '../../assets/images/Main/bant_cake.png';
+import Cupcakes from '../../assets/images/Main/cupcakes.png';
+import Macarons from '../../assets/images/Main/macarons.png';
+import LimonKul from '../../assets/images/Main/limon_kul.png';
+import KlubKul from '../../assets/images/Main/klub_kul.png';
+import sortIcon from '../../assets/images/Main/sort.svg';
 
 const parse_price = (value: string) => Number(value.replace(/[^\d]/g, ''));
 

@@ -1,8 +1,8 @@
 import './Header.scss';
-import phone from '../../assets/images/phonev.svg';
-import tg from '../../assets/images/tgv.svg';
-import korz from '../../assets/images/korzv.svg';
-import arrow from '../../assets/images/arrow.svg';
+import phone from '../../assets/images/Header/phonev.svg';
+import tg from '../../assets/images/Header/tgv.svg';
+import korz from '../../assets/images/Header/korzv.svg';
+import arrow from '../../assets/images/Header/arrow.svg';
 
 const top_links = [
   { label: 'Как заказать?', href: '/how-to-order' },
@@ -40,6 +40,9 @@ const nav_items = [
 const pasxa_path = '/pasxa';
 
 const Header = () => {
+  const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+  const isPasxaPage = currentPath === '/pasxa';
+
   return (
     <header className="header">
       <div className="container header_top">
@@ -76,7 +79,7 @@ const Header = () => {
           {nav_items.map((item, index) => (
             <div className="menu_item" key={item.title}>
               {index === 0 ? (
-                <a className="menu_item_trigger" href={pasxa_path}>
+                <a className={`menu_item_trigger${isPasxaPage ? ' is_active' : ''}`} href={pasxa_path}>
                   {item.title}
                 </a>
               ) : (
@@ -86,8 +89,23 @@ const Header = () => {
                     <img className="menu_item_arrow" src={arrow} />
                   </button>
                   <div className="menu_item_dropdown">
-                    {item.links.map((link) => (
-                      <a href="#menu" key={link}>
+                    {item.links.map((link, linkIndex) => (
+                      <a
+                        href={
+                          index === 5 && linkIndex === 0
+                            ? '/tableware'
+                            : link === 'На завтрак'
+                            ? '/breakfast'
+                            : link === 'Конфеты'
+                              ? '/candies'
+                              : link === 'Стандартные торты'
+                                ? '/standard-cakes'
+                                : link === 'Кофе'
+                                  ? '/coffee'
+                                : '#menu'
+                        }
+                        key={link}
+                      >
                         {link}
                       </a>
                     ))}
@@ -103,4 +121,5 @@ const Header = () => {
 };
 
 export default Header;
+
 

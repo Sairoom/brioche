@@ -2,7 +2,7 @@ import Layout from '../../components/layout/Layout';
 import SideBar from '../../components/layout/SideBar';
 import { sideBarItems } from '../../components/layout/sidebarItems';
 import './Delivery.scss';
-import Map from '../../assets/images/map.svg';
+import Map from '../../assets/images/Delivery/map.svg';
 
 const deliverySections = [
   {
@@ -36,7 +36,7 @@ const Delivery = () => (
               <p>{section.text}</p>
             </section>
           ))}
-          <img className="delivery_map" src={Map} alt="Карта зоны доставки" />
+          <img className="delivery_map" src={Map}/>
         </div>
       </section>
     </main>

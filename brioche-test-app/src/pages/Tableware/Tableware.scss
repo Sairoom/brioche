@@ -1,0 +1,98 @@
+.tableware {
+  background: #ffffff;
+}
+
+.tableware .container {
+  width: min(1300px, calc(100% - 84px));
+}
+
+.tableware_products {
+  padding-top: 30px;
+  padding-bottom: 146px;
+}
+
+.tableware_grid {
+  display: grid;
+  grid-template-columns: repeat(4, 280px);
+  justify-content: center;
+  column-gap: 60px;
+  row-gap: 85px;
+}
+
+.tableware_card_img_wrap {
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.tableware_card img {
+  display: block;
+  width: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  transform: scale(1);
+  image-rendering: -webkit-optimize-contrast;
+  transition: transform 0.35s ease;
+  transform-origin: center;
+}
+
+.tableware_card h3 {
+  margin: 35px 0 0;
+  font-size: 16.6px;
+  line-height: 1.35;
+  color: #000000;
+  font-weight: 400;
+}
+
+.tableware_card_price,
+.tableware_card_cta {
+  font-size: 16.2px;
+  line-height: 1.25;
+}
+
+.tableware_card_meta {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-top: 3px;
+}
+
+.tableware_card_price {
+  position: absolute;
+  inset: 0 auto auto 0;
+  color: #1c1c1c;
+  font-weight: 700;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.tableware_card_cta {
+  position: absolute;
+  inset: 0 auto auto 0;
+  font-weight: 400;
+  color: #cd87af;
+  text-decoration: underline;
+  opacity: 0;
+  transform: translateX(-10px);
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.tableware_card:hover img {
+  transform: scale(1.04);
+}
+
+.tableware_card:hover .tableware_card_price {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.tableware_card:hover .tableware_card_cta {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}

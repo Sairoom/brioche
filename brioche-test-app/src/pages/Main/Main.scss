@@ -71,19 +71,6 @@
   transform: rotate(180deg);
 }
 
-@media (max-width: 520px) {
-  .main_filters {
-    gap: 6px;
-    min-height: 40px;
-    padding: 0 16px;
-  }
-
-  .main_filters_text,
-  .main_filters_option {
-    font-size: 11px;
-  }
-}
-
 .main_grid {
   display: grid;
   grid-template-columns: repeat(4, 280px);

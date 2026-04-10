@@ -6,6 +6,12 @@ import Order from './pages/Order/Order';
 import Payment from './pages/Payment/Payment';
 import Contacts from './pages/Contacts/Contacts';
 import Reserve from './pages/Reserve/Reserve';
+import Pasxa from './pages/Pasxa/Pasxa';
+import Breakfast from './pages/Breakfast/Breakfast';
+import Candies from './pages/Candies/Candies';
+import StandardCakes from './pages/StandardCakes/StandardCakes';
+import Coffee from './pages/Coffee/Coffee';
+import Tableware from './pages/Tableware/Tableware';
 
 const App = () => {
   const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
@@ -36,6 +42,30 @@ const App = () => {
 
   if (currentPath === '/reserve') {
     return <Reserve />;
+  }
+
+  if (currentPath === '/pasxa') {
+    return <Pasxa />;
+  }
+
+  if (currentPath === '/breakfast') {
+    return <Breakfast />;
+  }
+
+  if (currentPath === '/candies') {
+    return <Candies />;
+  }
+
+  if (currentPath === '/standard-cakes') {
+    return <StandardCakes />;
+  }
+
+  if (currentPath === '/coffee') {
+    return <Coffee />;
+  }
+
+  if (currentPath === '/tableware') {
+    return <Tableware />;
   }
 
   return <Main />;

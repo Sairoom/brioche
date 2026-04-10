@@ -177,6 +177,10 @@
   color: #cd87af;
 }
 
+.menu_item_trigger.is_active {
+  color: #cd87af;
+}
+
 .menu_item:hover .menu_item_dropdown {
   opacity: 1;
   visibility: visible;
