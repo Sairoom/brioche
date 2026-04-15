@@ -84,7 +84,7 @@ const ProductDetail = () => {
           <article className="product_content">
             <h1>{product.title}</h1>
             <p>{product.description}</p>
-            <p>{product.allergens}</p>
+            <p className="product_allergens">{product.allergens}</p>
             <p>{product.allergyNote}</p>
 
             <div className="product_cta_row">
