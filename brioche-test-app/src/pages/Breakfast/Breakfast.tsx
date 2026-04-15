@@ -11,7 +11,14 @@ import scrambleSausages from '../../assets/images/breakfast/scramble-sausages.pn
 import crepesMilk from '../../assets/images/breakfast/crepes-milk.png';
 import ricePorridge from '../../assets/images/breakfast/rice-porridge.png';
 
-const products = [
+type BreakfastProduct = {
+  title: string;
+  price: string;
+  image: string;
+  href?: string;
+};
+
+const products: BreakfastProduct[] = [
   {
     title: 'Завтрак-конструктор',
     price: 'от 450 ₽',
@@ -26,6 +33,7 @@ const products = [
     title: 'Бенедикт с яйцом пашот, голландским соусом и пастрами из индейки',
     price: '1,090 ₽',
     image: benedictPastrami,
+    href: '/products/benedict-pastrami',
   },
   {
     title: 'Салат с авокадо, яйцом пашот, гречкой с пармезаном, свежими овощами',
@@ -62,7 +70,7 @@ const products = [
     price: '590 ₽',
     image: ricePorridge,
   },
-] as const;
+];
 
 const Breakfast = () => (
   <Layout>
@@ -71,7 +79,7 @@ const Breakfast = () => (
         <div className="breakfast_grid">
           {products.map((product) => (
             <article className="breakfast_card" key={product.title}>
-              <a href="/">
+              <a href={product.href ?? '/'}>
                 <div className="breakfast_card_img_wrap">
                   <img src={product.image} alt={product.title} />
                 </div>

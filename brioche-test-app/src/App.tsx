@@ -12,6 +12,8 @@ import Candies from './pages/Candies/Candies';
 import StandardCakes from './pages/StandardCakes/StandardCakes';
 import Coffee from './pages/Coffee/Coffee';
 import Tableware from './pages/Tableware/Tableware';
+import Cart from './pages/Cart/Cart';
+import ProductDetail from './pages/ProductDetail/ProductDetail';
 
 const App = () => {
   const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
@@ -66,6 +68,14 @@ const App = () => {
 
   if (currentPath === '/tableware') {
     return <Tableware />;
+  }
+
+  if (currentPath === '/cart') {
+    return <Cart />;
+  }
+
+  if (currentPath === '/products/benedict-pastrami') {
+    return <ProductDetail />;
   }
 
   return <Main />;

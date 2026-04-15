@@ -68,7 +68,7 @@ const Header = () => {
           <button type="button">
             <img src={tg} />
           </button>
-          <button type="button">
+          <button type="button" onClick={() => { window.location.href = '/cart'; }} aria-label="Открыть корзину">
             <img src={korz} />
           </button>
         </div>
