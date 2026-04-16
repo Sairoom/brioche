@@ -1,36 +1,62 @@
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import Layout from '../../components/layout/Layout';
+import benedictMain from '../../assets/images/product-detail/benedict-main.svg';
+import benedictThumb2 from '../../assets/images/product-detail/benedict-thumb-2.jpg';
+import relatedPate from '../../assets/images/product-detail/related-pate.png';
+import relatedSpreads from '../../assets/images/product-detail/related-spreads.png';
+import relatedSteak from '../../assets/images/product-detail/related-steak.png';
 import sliderArrow from '../../assets/images/product-detail/slider-arrow.svg';
-import { API_BASE_URL } from '../../config/api';
 import './ProductDetail.scss';
 
-type ProductCard = {
-  id: number;
-  slug: string;
+type RelatedProduct = {
   title: string;
   price: string;
-  price_value: number;
-  main_image_url: string;
+  image: string;
 };
 
-type ProductDetails = ProductCard & {
-  description: string | null;
-  allergy_note: string | null;
-  gallery_images: string[];
-  ingredients: string[];
-  allergens: string[];
-  related: ProductCard[];
+type ProductDetails = {
+  title: string;
+  description: string;
+  allergens: string;
+  allergyNote: string;
+  price: string;
+  images: string[];
+  related: RelatedProduct[];
 };
 
-type ProductResponse = {
-  data: ProductDetails;
+const product: ProductDetails = {
+  title: 'Бенедикт с яйцом пашот, голландским соусом, пастрами из индейки',
+  description:
+    'На поджаристую бриошь, которую мы печем каждый день сами, выкладываем ломтики пастрами из индейки, дополняем двумя яйцами пашот, медово-горчичной заправкой и голландским соусом.',
+  allergens: 'Аллергены: глютен, лактоза, цитрусовые, горчица, орехи',
+  allergyNote:
+    '*Если у вас есть аллергия на какие-либо продукты, пожалуйста, укажите это в комментарии при оформлении заказа.',
+  price: '1,090 ₽',
+  images: [benedictMain, benedictThumb2],
+  related: [
+    {
+      title: 'Куриный паштет, бриошь, соус из сливы',
+      price: '750 ₽',
+      image: relatedPate,
+    },
+    {
+      title: 'Сет намазок',
+      price: '790 ₽',
+      image: relatedSpreads,
+    },
+    {
+      title: 'Стейк Мачете, мятый картофель, сальса верде',
+      price: '2,500 ₽',
+      image: relatedSteak,
+    },
+  ],
 };
 
 type ProductDetailProps = {
-  slug: string;
+  slug?: string;
 };
 
-const ProductDetail = ({ slug }: ProductDetailProps) => {
+const ProductDetail = (_props: ProductDetailProps) => {
   const galleryViewportRef = useRef<HTMLDivElement | null>(null);
   const pointerIdRef = useRef<number | null>(null);
   const dragStartXRef = useRef(0);
@@ -38,75 +64,7 @@ const ProductDetail = ({ slug }: ProductDetailProps) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [product, setProduct] = useState<ProductDetails | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    const loadProduct = async () => {
-      setIsLoading(true);
-      setErrorMessage(null);
-
-      try {
-        const response = await fetch(`${API_BASE_URL}/products/${encodeURIComponent(slug)}`, {
-          signal: abortController.signal,
-        });
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error('Товар не найден.');
-          }
-
-          throw new Error('Не удалось загрузить товар. Попробуйте обновить страницу.');
-        }
-
-        const payload = (await response.json()) as ProductResponse;
-
-        if (!payload.data) {
-          throw new Error('Сервер вернул пустой ответ.');
-        }
-
-        setProduct(payload.data);
-      } catch (error) {
-        if (abortController.signal.aborted) {
-          return;
-        }
-
-        setProduct(null);
-        setErrorMessage(
-          error instanceof Error ? error.message : 'Не удалось загрузить товар. Попробуйте позже.',
-        );
-      } finally {
-        if (!abortController.signal.aborted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    void loadProduct();
-
-    return () => abortController.abort();
-  }, [slug]);
-
-  const productImages = useMemo(() => {
-    if (!product) {
-      return [];
-    }
-
-    return Array.from(
-      new Set([product.main_image_url, ...product.gallery_images].filter(Boolean)),
-    );
-  }, [product]);
-
-  useEffect(() => {
-    setSelectedImage(0);
-    setDragOffset(0);
-    setIsDragging(false);
-    pointerIdRef.current = null;
-  }, [product?.id]);
-
+  const productImages = useMemo(() => product.images.filter(Boolean), []);
   const totalImages = productImages.length;
   const hasMultipleImages = totalImages > 1;
 
@@ -124,6 +82,10 @@ const ProductDetail = ({ slug }: ProductDetailProps) => {
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (!hasMultipleImages) {
+      return;
+    }
+
+    if (event.pointerType === 'mouse' && event.button !== 0) {
       return;
     }
 
@@ -165,33 +127,6 @@ const ProductDetail = ({ slug }: ProductDetailProps) => {
     pointerIdRef.current = null;
   };
 
-  if (isLoading) {
-    return (
-      <Layout>
-        <main className="product_detail">
-          <section className="container">
-            <p className="product_detail_status">Загружаем товар...</p>
-          </section>
-        </main>
-      </Layout>
-    );
-  }
-
-  if (!product || errorMessage) {
-    return (
-      <Layout>
-        <main className="product_detail">
-          <section className="container">
-            <p className="product_detail_status">{errorMessage ?? 'Товар не найден.'}</p>
-          </section>
-        </main>
-      </Layout>
-    );
-  }
-
-  const allergensText =
-    product.allergens.length > 0 ? `Аллергены: ${product.allergens.join(', ')}` : null;
-
   return (
     <Layout>
       <main className="product_detail">
@@ -202,7 +137,7 @@ const ProductDetail = ({ slug }: ProductDetailProps) => {
                 type="button"
                 className="product_gallery_nav product_gallery_nav_prev"
                 onClick={goToPrevious}
-                aria-label="Предыдущее фото"
+                aria-label="Previous photo"
                 disabled={!hasMultipleImages}
               >
                 <img src={sliderArrow} alt="" />
@@ -237,20 +172,19 @@ const ProductDetail = ({ slug }: ProductDetailProps) => {
                 type="button"
                 className="product_gallery_nav product_gallery_nav_next"
                 onClick={goToNext}
-                aria-label="Следующее фото"
+                aria-label="Next photo"
                 disabled={!hasMultipleImages}
               >
                 <img src={sliderArrow} alt="" />
               </button>
             </div>
-
             <div className="product_gallery_thumbs">
               {productImages.map((image, index) => (
                 <button
-                  key={`${image}-thumb-${index}`}
+                  key={image}
                   type="button"
                   className={`product_thumb${selectedImage === index ? ' is_active' : ''}`}
-                  onClick={() => goToImage(index)}
+                  onClick={() => setSelectedImage(index)}
                   aria-label={`Фото ${index + 1}`}
                 >
                   <img src={image} alt="" />
@@ -261,9 +195,9 @@ const ProductDetail = ({ slug }: ProductDetailProps) => {
 
           <article className="product_content">
             <h1>{product.title}</h1>
-            {product.description ? <p>{product.description}</p> : null}
-            {allergensText ? <p className="product_allergens">{allergensText}</p> : null}
-            {product.allergy_note ? <p>{product.allergy_note}</p> : null}
+            <p>{product.description}</p>
+            <p className="product_allergens">{product.allergens}</p>
+            <p>{product.allergyNote}</p>
 
             <div className="product_cta_row">
               <button type="button">В корзину</button>
@@ -276,13 +210,16 @@ const ProductDetail = ({ slug }: ProductDetailProps) => {
           <h2>Вас также заинтересует</h2>
           <div className="product_related_grid">
             {product.related.map((item) => (
-              <article className="product_related_card" key={item.slug}>
-                <a href={`/products/${item.slug}`}>
+              <article className="product_related_card" key={item.title}>
+                <a href="/">
                   <div className="product_related_img_wrap">
-                    <img src={item.main_image_url} alt={item.title} />
+                    <img src={item.image} alt={item.title} />
                   </div>
                   <h3>{item.title}</h3>
-                  <p>{item.price}</p>
+                  <div className="product_related_meta">
+                    <p className="product_related_price">{item.price}</p>
+                    <p className="product_related_cta">В корзину</p>
+                  </div>
                 </a>
               </article>
             ))}
