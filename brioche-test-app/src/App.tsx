@@ -74,8 +74,12 @@ const App = () => {
     return <Cart />;
   }
 
-  if (currentPath === '/products/benedict-pastrami') {
-    return <ProductDetail />;
+  if (currentPath.startsWith('/products/')) {
+    const slug = decodeURIComponent(currentPath.slice('/products/'.length));
+
+    if (slug) {
+      return <ProductDetail slug={slug} />;
+    }
   }
 
   return <Main />;
