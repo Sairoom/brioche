@@ -1,7 +1,7 @@
 import Layout from '../../components/layout/Layout';
 import './Breakfast.scss';
 import breakfastBuilder from '../../assets/images/breakfast/breakfast-builder.png';
-import toastCaviar from '../../assets/images/breakfast/toast-caviar.png';
+import toastCaviar from '../../assets/images/breakfast/ikra.jpg';
 import benedictPastrami from '../../assets/images/breakfast/benedict-pastrami.png';
 import saladAvocado from '../../assets/images/breakfast/salad-avocado.png';
 import basqueCheesecake from '../../assets/images/breakfast/basque-cheesecake.png';
@@ -23,11 +23,13 @@ const products: BreakfastProduct[] = [
     title: 'Завтрак-конструктор',
     price: 'от 450 ₽',
     image: breakfastBuilder,
+    href: '/products/breakfast-builder',
   },
   {
     title: 'Тост с домашней красной икрой',
     price: '890 ₽',
     image: toastCaviar,
+    href: '/products/toast-caviar',
   },
   {
     title: 'Бенедикт с яйцом пашот, голландским соусом и пастрами из индейки',
@@ -39,6 +41,7 @@ const products: BreakfastProduct[] = [
     title: 'Салат с авокадо, яйцом пашот, гречкой с пармезаном, свежими овощами',
     price: '970 ₽',
     image: saladAvocado,
+    href: '/products/salad-avocado',
   },
   {
     title: 'Баскская запеканка, соленая карамель, брусника',

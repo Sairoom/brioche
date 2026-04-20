@@ -27,6 +27,14 @@
   overflow: hidden;
 }
 
+.product_gallery_main_wide {
+  height: 460px;
+}
+
+.product_gallery_main_wide .product_gallery_slide img {
+  object-fit: fill;
+}
+
 .product_gallery_viewport {
   width: 100%;
   height: 100%;
@@ -170,12 +178,179 @@
   max-width: 350px;
 }
 
+.product_addons {
+  margin-top: 46px;
+  max-width: 430px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.product_addons_select {
+  width: 281px;
+  height: 46px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  background: #fafafa;
+  color: #1f1f1f;
+  font-size: 16px;
+  line-height: 1.2;
+  padding: 0 20px;
+}
+
+.product_addons_date_wrap {
+  position: relative;
+  height: 46px;
+}
+
+.product_addons_date_trigger {
+  width: 100%;
+  text-align: left;
+  color: #6f7480;
+  cursor: pointer;
+}
+
+.product_addons_date_trigger.is_filled {
+  color: #1f1f1f;
+}
+
+.product_addons_date_trigger.is_open {
+  border-color: #cd87af;
+}
+
+.product_datepicker {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  z-index: 20;
+  width: 336px;
+  border: 1px solid #d0d0d0;
+  background: #fafafa;
+}
+
+.product_datepicker::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 20px;
+  width: 12px;
+  height: 12px;
+  border-left: 1px solid #cd87af;
+  border-top: 1px solid #cd87af;
+  background: #fafafa;
+  transform: rotate(45deg);
+}
+
+.product_datepicker_header {
+  height: 34px;
+  border-top: 1px solid #cd87af;
+  background: #a6caea;
+  display: grid;
+  grid-template-columns: 34px 1fr 34px;
+  align-items: center;
+}
+
+.product_datepicker_title {
+  text-align: center;
+  color: #777777;
+  font-size: 16px;
+  line-height: 34px;
+}
+
+.product_datepicker_nav {
+  border: 0;
+  background: transparent;
+  color: #b3bbc3;
+  font-size: 24px;
+  height: 34px;
+  cursor: pointer;
+}
+
+.product_datepicker_nav:disabled {
+  color: #d6dde3;
+  cursor: default;
+}
+
+.product_datepicker_weekdays {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(7, 34px);
+  justify-content: center;
+  column-gap: 12px;
+}
+
+.product_datepicker_weekdays span {
+  color: #c0c0c0;
+  font-size: 16px;
+  line-height: 34px;
+  text-align: center;
+}
+
+.product_datepicker_days {
+  margin: 10px 0 14px;
+  display: grid;
+  grid-template-columns: repeat(7, 34px);
+  justify-content: center;
+  column-gap: 12px;
+  row-gap: 12px;
+}
+
+.product_datepicker_day,
+.product_datepicker_day_empty {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  font-size: 16px;
+  line-height: 34px;
+  text-align: center;
+  color: #777777;
+}
+
+.product_datepicker_day {
+  cursor: pointer;
+}
+
+.product_datepicker_day:hover {
+  background: rgba(205, 135, 175, 0.19);
+}
+
+.product_datepicker_day.is_selected {
+  background: rgba(205, 135, 175, 0.19);
+}
+
+.product_datepicker_day:disabled {
+  color: #c8c8c8;
+  cursor: default;
+}
+
+.product_datepicker_day:disabled:hover {
+  background: transparent;
+}
+
+.product_addons_select:focus,
+.product_addons_select:focus-visible,
+.product_addons_select:active {
+  border-color: #cd87af;
+  outline: none;
+}
+
+.product_addons_date_wrap:focus-within .product_addons_date_trigger {
+  border-color: #cd87af;
+  outline: none;
+}
+
 .product_cta_row {
   margin-top: 110px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 120px;
+}
+
+.product_cta_row_with_addons {
+  margin-top: 56px;
 }
 
 .product_allergens {
@@ -221,6 +396,10 @@
 
 .product_related {
   padding-top: 120px;
+}
+
+.product_related.product_related_no_slider {
+  padding-top: 110px;
 }
 
 .product_related h2 {
@@ -315,3 +494,4 @@
   opacity: 1;
   transform: translateX(0);
 }
+

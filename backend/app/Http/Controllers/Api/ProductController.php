@@ -28,9 +28,7 @@ class ProductController extends Controller
             $productsQuery->active();
         }
 
-        $products = $productsQuery
-            ->limit($limit)
-            ->get();
+        $products = $productsQuery->limit($limit)->get();
 
         return response()->json([
             'data' => $products->map(fn (Product $product): array => $this->transformProductCard($product))->values(),

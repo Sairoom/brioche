@@ -18,8 +18,15 @@ import sortIcon from '../../assets/images/Main/sort.svg';
 
 const parse_price = (value: string) => Number(value.replace(/[^\d]/g, ''));
 
-const products = [
-  { title: 'Торт с кремовой сиренью', price: 'от 5,950 ₽', image: Siren },
+type MainProduct = {
+  title: string;
+  price: string;
+  image: string;
+  href?: string;
+};
+
+const products: MainProduct[] = [
+  { title: 'Торт с кремовой сиренью', price: 'от 5,950 ₽', image: Siren, href: '/products/lilac-cream-cake' },
   { title: 'Торт с ассорти из сухоцветов', price: 'от 4,800 ₽', image: Suxoch },
   { title: 'Торт с кремовой мимозой', price: 'от 5,950 ₽', image: Mimosa },
   { title: 'Торт с васильками', price: 'от 4,750 ₽', image: Vasilk },
@@ -31,7 +38,7 @@ const products = [
   { title: 'Набор макарон', price: 'от 1,240 ₽', image: Macarons },
   { title: 'Пасхальный кулич в меренге с лимонным курдом', price: '4,900 ₽', image: LimonKul },
   { title: 'Пасхальный кулич с макароном и клубничным кремом', price: '6,500 ₽', image: KlubKul },
-] as const;
+];
 
 const productsBase = products.map((product, baseIndex) => ({
   ...product,
@@ -123,7 +130,7 @@ const Main = () => {
           <div className="container main_grid">
             {shownProducts.map((product) => (
               <article className="card" key={product.baseIndex}>
-                <a href="/">
+                <a href={product.href ?? '/'}>
                   <div className="card_img_wrap">
                     <img src={product.image} alt={product.title} />
                   </div>
