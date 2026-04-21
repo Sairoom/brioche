@@ -27,8 +27,8 @@ type MainProduct = {
 
 const products: MainProduct[] = [
   { title: 'Торт с кремовой сиренью', price: 'от 5,950 ₽', image: Siren, href: '/products/lilac-cream-cake' },
-  { title: 'Торт с ассорти из сухоцветов', price: 'от 4,800 ₽', image: Suxoch },
-  { title: 'Торт с кремовой мимозой', price: 'от 5,950 ₽', image: Mimosa },
+  { title: 'Торт с ассорти из сухоцветов', price: 'от 4,800 ₽', image: Suxoch, href: '/products/dried-flowers-cake' },
+  { title: 'Торт с кремовой мимозой', price: 'от 5,950 ₽', image: Mimosa, href: '/products/lilac-cream-cake' },
   { title: 'Торт с васильками', price: 'от 4,750 ₽', image: Vasilk },
   { title: 'Торт с венком из макарон', price: 'от 5,550 ₽', image: MacaronCake },
   { title: 'Торт с цветами', price: 'от 5,640 ₽', image: cakeFlowers },
@@ -154,3 +154,4 @@ const Main = () => {
 };
 
 export default Main;
+

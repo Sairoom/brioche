@@ -27,6 +27,11 @@
   overflow: hidden;
 }
 
+.product_gallery_main_dynamic {
+  will-change: height;
+  transition: height 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .product_gallery_main_wide {
   height: 460px;
 }
@@ -404,6 +409,7 @@
 
 .product_related {
   padding-top: 120px;
+  transition: margin-top 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .product_related.product_related_no_slider {

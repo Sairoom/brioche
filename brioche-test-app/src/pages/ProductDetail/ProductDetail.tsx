@@ -112,7 +112,41 @@ const PRODUCT_CONTROLS_BY_SLUG: Record<string, ProductControlsConfig> = {
         id: 'flavor',
         ariaLabel: 'Выберите вкус торта',
         placeholder: 'Выберите вкус торта...',
-        defaultValue: 'Морковный',
+        defaultValue: 'Сливочно-сырный с вишней',
+        width: 281,
+        options: [
+          'Сливочно-сырный с вишней',
+          'Красный бархат',
+          'Ванильно-ореховый',
+          'Банан-карамель',
+          'Шоколадный пломбир',
+          'Морковный',
+          'Шоколадный манго-маракуйя',
+        ],
+      },
+      {
+        id: 'weight',
+        ariaLabel: 'Выберите вес торта',
+        placeholder: 'Выберите вес торта...',
+        width: 220,
+        options: ['1кг (диаметром 12см)', '2кг (диаметром 18см)', '4кг (диаметром 23см)'],
+      },
+    ],
+  },
+  'dried-flowers-cake': {
+    pricePrefix: 'от ',
+    dateControl: {
+      id: 'deliveryDate',
+      ariaLabel: 'Выберите дату доставки',
+      placeholder: 'Выберите дату доставки *',
+      width: 253,
+    },
+    selectControls: [
+      {
+        id: 'flavor',
+        ariaLabel: 'Выберите вкус торта',
+        placeholder: 'Выберите вкус торта...',
+        defaultValue: 'Сливочно-сырный с вишней',
         width: 281,
         options: [
           'Сливочно-сырный с вишней',
@@ -156,6 +190,10 @@ const toStartOfDay = (date: Date): Date => new Date(date.getFullYear(), date.get
 const toStartOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), 1);
 const toEndOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth() + 1, 0);
 const addMonths = (date: Date, months: number): Date => new Date(date.getFullYear(), date.getMonth() + months, 1);
+const DYNAMIC_GALLERY_SLUGS = new Set(['dried-flowers-cake']);
+const RELATED_OFFSET_SLUGS = new Set(['lilac-cream-cake']);
+const DEFAULT_DYNAMIC_GALLERY_ASPECT_RATIO = 16 / 9;
+const MIN_ASPECT_RATIO = 0.1;
 
 const toIsoDate = (date: Date): string => {
   const y = date.getFullYear();
@@ -179,6 +217,7 @@ const fromIsoDate = (value: string): Date | null => {
 };
 
 const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
+  const productGalleryRef = useRef<HTMLDivElement | null>(null);
   const galleryViewportRef = useRef<HTMLDivElement | null>(null);
   const galleryMainRef = useRef<HTMLDivElement | null>(null);
   const productContentRef = useRef<HTMLElement | null>(null);
@@ -196,6 +235,8 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
   const [selectedControlValues, setSelectedControlValues] = useState<Record<string, string>>({});
   const [noSliderRelatedShift, setNoSliderRelatedShift] = useState(0);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [imageAspectRatios, setImageAspectRatios] = useState<Record<string, number>>({});
+  const [galleryMainHeight, setGalleryMainHeight] = useState<number | null>(null);
 
   const todayDate = useMemo(() => toStartOfDay(new Date()), []);
   const currentMonthStart = useMemo(() => toStartOfMonth(todayDate), [todayDate]);
@@ -251,6 +292,48 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
   }, [product]);
 
   useEffect(() => {
+    if (!productImages.length) {
+      setImageAspectRatios({});
+
+      return;
+    }
+
+    let isDisposed = false;
+
+    const loadImageRatios = async () => {
+      const entries = await Promise.all(
+        productImages.map(
+          (imageUrl) =>
+            new Promise<[string, number]>((resolve) => {
+              const image = new Image();
+              image.onload = () => {
+                const width = image.naturalWidth || 0;
+                const height = image.naturalHeight || 0;
+                const ratio = width > 0 && height > 0 ? width / height : 1;
+
+                resolve([imageUrl, ratio]);
+              };
+              image.onerror = () => resolve([imageUrl, 1]);
+              image.src = imageUrl;
+            }),
+        ),
+      );
+
+      if (isDisposed) {
+        return;
+      }
+
+      setImageAspectRatios(Object.fromEntries(entries));
+    };
+
+    void loadImageRatios();
+
+    return () => {
+      isDisposed = true;
+    };
+  }, [productImages]);
+
+  useEffect(() => {
     setSelectedImage(0);
     setDragOffset(0);
     setIsDragging(false);
@@ -263,15 +346,25 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
   const selectControls = controlsConfig?.selectControls ?? [];
   const hasControls = Boolean(controlsConfig?.dateControl) || selectControls.length > 0;
   const hasDateControl = Boolean(controlsConfig?.dateControl);
+  const hasDynamicGalleryHeight = Boolean(product && DYNAMIC_GALLERY_SLUGS.has(product.slug));
+  const shouldCompensateRelatedOffset =
+    !hasMultipleImages || hasDynamicGalleryHeight || Boolean(product && RELATED_OFFSET_SLUGS.has(product.slug));
+  const selectedImageUrl = productImages[selectedImage] ?? '';
+  const selectedImageAspectRatio = Math.max(
+    selectedImageUrl
+      ? (imageAspectRatios[selectedImageUrl] ?? DEFAULT_DYNAMIC_GALLERY_ASPECT_RATIO)
+      : DEFAULT_DYNAMIC_GALLERY_ASPECT_RATIO,
+    MIN_ASPECT_RATIO,
+  );
 
   useLayoutEffect(() => {
-    if (hasMultipleImages) {
+    if (!shouldCompensateRelatedOffset) {
       setNoSliderRelatedShift(0);
 
       return;
     }
 
-    const galleryEl = galleryMainRef.current;
+    const galleryEl = productGalleryRef.current;
     const contentEl = productContentRef.current;
 
     if (!galleryEl || !contentEl) {
@@ -299,7 +392,38 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
       observer.disconnect();
       window.removeEventListener('resize', updateShift);
     };
-  }, [hasMultipleImages, product?.id, hasControls]);
+  }, [shouldCompensateRelatedOffset, hasDynamicGalleryHeight, product?.id, hasControls]);
+
+  useLayoutEffect(() => {
+    if (!hasDynamicGalleryHeight) {
+      setGalleryMainHeight(null);
+
+      return;
+    }
+
+    const galleryEl = galleryMainRef.current;
+    if (!galleryEl) {
+      return;
+    }
+
+    const updateHeight = () => {
+      const width = galleryEl.offsetWidth || 690;
+      const nextHeight = Math.round(width / selectedImageAspectRatio);
+
+      setGalleryMainHeight((previousHeight) => (previousHeight === nextHeight ? previousHeight : nextHeight));
+    };
+
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(galleryEl);
+    window.addEventListener('resize', updateHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateHeight);
+    };
+  }, [hasDynamicGalleryHeight, product?.id, selectedImageAspectRatio]);
 
   useEffect(() => {
     if (!product) {
@@ -529,18 +653,22 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
     setIsDatePickerOpen(false);
   };
 
+  const galleryMainStyle =
+    hasDynamicGalleryHeight && galleryMainHeight !== null ? { height: `${galleryMainHeight}px` } : undefined;
+
   return (
     <Layout>
       <main className={`product_detail${hasMultipleImages ? '' : ' product_detail_no_slider'}`}>
         <section className="container product_detail_top">
-          <div className="product_gallery">
+          <div ref={productGalleryRef} className="product_gallery">
             <div
               ref={galleryMainRef}
               className={`product_gallery_main${
                 product.slug === 'toast-caviar' || product.slug === 'ikra' || product.slug === 'salad-avocado'
                   ? ' product_gallery_main_wide'
                   : ''
-              }`}
+              }${hasDynamicGalleryHeight ? ' product_gallery_main_dynamic' : ''}`}
+              style={galleryMainStyle}
             >
               {hasMultipleImages ? (
                 <button
@@ -728,7 +856,7 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
 
         <section
           className={`container product_related${hasMultipleImages ? '' : ' product_related_no_slider'}`}
-          style={!hasMultipleImages ? { marginTop: `${noSliderRelatedShift}px` } : undefined}
+          style={noSliderRelatedShift !== 0 ? { marginTop: `${noSliderRelatedShift}px` } : undefined}
         >
           <h2>Вас также заинтересует</h2>
           <div className="product_related_grid">
