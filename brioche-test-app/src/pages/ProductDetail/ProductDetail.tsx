@@ -154,6 +154,8 @@ const WEEKDAY_NAMES = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
 const toStartOfDay = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), date.getDate());
 const toStartOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), 1);
+const toEndOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth() + 1, 0);
+const addMonths = (date: Date, months: number): Date => new Date(date.getFullYear(), date.getMonth() + months, 1);
 
 const toIsoDate = (date: Date): string => {
   const y = date.getFullYear();
@@ -197,6 +199,8 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
 
   const todayDate = useMemo(() => toStartOfDay(new Date()), []);
   const currentMonthStart = useMemo(() => toStartOfMonth(todayDate), [todayDate]);
+  const maxDeliveryDate = useMemo(() => toStartOfDay(toEndOfMonth(addMonths(todayDate, 3))), [todayDate]);
+  const maxDeliveryMonthStart = useMemo(() => toStartOfMonth(maxDeliveryDate), [maxDeliveryDate]);
   const [visibleMonthStart, setVisibleMonthStart] = useState<Date>(currentMonthStart);
 
   useEffect(() => {
@@ -474,6 +478,9 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
   const isCurrentMonthShown =
     visibleMonthStart.getFullYear() === currentMonthStart.getFullYear() &&
     visibleMonthStart.getMonth() === currentMonthStart.getMonth();
+  const isMaxMonthShown =
+    visibleMonthStart.getFullYear() === maxDeliveryMonthStart.getFullYear() &&
+    visibleMonthStart.getMonth() === maxDeliveryMonthStart.getMonth();
 
   const visibleMonthLabel = `${MONTH_NAMES[visibleMonthStart.getMonth()]} ${visibleMonthStart.getFullYear()}`;
 
@@ -504,15 +511,21 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
   };
 
   const goNextMonth = () => {
+    if (isMaxMonthShown) {
+      return;
+    }
+
     setVisibleMonthStart(new Date(visibleMonthStart.getFullYear(), visibleMonthStart.getMonth() + 1, 1));
   };
 
   const selectDeliveryDate = (date: Date) => {
-    if (toStartOfDay(date).getTime() < todayDate.getTime()) {
+    const normalizedDate = toStartOfDay(date);
+
+    if (normalizedDate.getTime() < todayDate.getTime() || normalizedDate.getTime() > maxDeliveryDate.getTime()) {
       return;
     }
 
-    setDeliveryDate(toIsoDate(date));
+    setDeliveryDate(toIsoDate(normalizedDate));
     setIsDatePickerOpen(false);
   };
 
@@ -637,6 +650,7 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
                             type="button"
                             className="product_datepicker_nav"
                             onClick={goNextMonth}
+                            disabled={isMaxMonthShown}
                             aria-label="Следующий месяц"
                           >
                             ›
@@ -656,7 +670,9 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
                             }
 
                             const normalizedDate = toStartOfDay(cell.date);
-                            const isDisabled = normalizedDate.getTime() < todayDate.getTime();
+                            const isDisabled =
+                              normalizedDate.getTime() < todayDate.getTime() ||
+                              normalizedDate.getTime() > maxDeliveryDate.getTime();
                             const isSelected = deliveryDate === toIsoDate(normalizedDate);
 
                             return (

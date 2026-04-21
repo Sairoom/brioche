@@ -190,8 +190,10 @@
 .product_addons_select {
   width: 281px;
   height: 46px;
-  border: 1px solid #d0d0d0;
+  border: 2px solid transparent;
   border-radius: 4px;
+  box-sizing: border-box;
+  box-shadow: inset 0 0 0 1px #d0d0d0;
   background: #fafafa;
   color: #1f1f1f;
   font-size: 16px;
@@ -217,15 +219,17 @@
 
 .product_addons_date_trigger.is_open {
   border-color: #cd87af;
+  box-shadow: none;
 }
 
 .product_datepicker {
   position: absolute;
-  top: calc(100% + 12px);
+  top: calc(100% + 10px);
   left: 0;
   z-index: 20;
-  width: 336px;
+  width: 268px;
   border: 1px solid #d0d0d0;
+  border-top-color: #cd87af;
   background: #fafafa;
 }
 
@@ -244,16 +248,16 @@
 
 .product_datepicker_header {
   height: 34px;
-  border-top: 1px solid #cd87af;
-  background: #a6caea;
+  background: #fafafa;
   display: grid;
   grid-template-columns: 34px 1fr 34px;
   align-items: center;
+  border-bottom: 1px solid #ececec;
 }
 
 .product_datepicker_title {
   text-align: center;
-  color: #777777;
+  color: #6f7480;
   font-size: 16px;
   line-height: 34px;
 }
@@ -261,7 +265,7 @@
 .product_datepicker_nav {
   border: 0;
   background: transparent;
-  color: #b3bbc3;
+  color: #b7bdc4;
   font-size: 24px;
   height: 34px;
   cursor: pointer;
@@ -273,11 +277,11 @@
 }
 
 .product_datepicker_weekdays {
-  margin-top: 12px;
+  margin: 10px 15px 0;
   display: grid;
   grid-template-columns: repeat(7, 34px);
-  justify-content: center;
-  column-gap: 12px;
+  justify-content: start;
+  column-gap: 0;
 }
 
 .product_datepicker_weekdays span {
@@ -288,12 +292,12 @@
 }
 
 .product_datepicker_days {
-  margin: 10px 0 14px;
+  margin: 4px 15px 14px;
   display: grid;
   grid-template-columns: repeat(7, 34px);
-  justify-content: center;
-  column-gap: 12px;
-  row-gap: 12px;
+  justify-content: start;
+  column-gap: 0;
+  row-gap: 0;
 }
 
 .product_datepicker_day,
@@ -305,7 +309,7 @@
   font-size: 16px;
   line-height: 34px;
   text-align: center;
-  color: #777777;
+  color: #7a8590;
 }
 
 .product_datepicker_day {
@@ -313,11 +317,13 @@
 }
 
 .product_datepicker_day:hover {
-  background: rgba(205, 135, 175, 0.19);
+  background: rgba(205, 135, 175, 0.14);
 }
 
 .product_datepicker_day.is_selected {
-  background: rgba(205, 135, 175, 0.19);
+  background: transparent;
+  color: #4b5561;
+  font-weight: 500;
 }
 
 .product_datepicker_day:disabled {
@@ -333,11 +339,13 @@
 .product_addons_select:focus-visible,
 .product_addons_select:active {
   border-color: #cd87af;
+  box-shadow: none;
   outline: none;
 }
 
 .product_addons_date_wrap:focus-within .product_addons_date_trigger {
   border-color: #cd87af;
+  box-shadow: none;
   outline: none;
 }
 
@@ -494,4 +502,3 @@
   opacity: 1;
   transform: translateX(0);
 }
-
