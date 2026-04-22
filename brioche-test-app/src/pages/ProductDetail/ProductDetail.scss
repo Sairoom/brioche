@@ -400,6 +400,15 @@
   background-size: 100% 100%;
 }
 
+.product_cta_row button.product_cta_button_compact {
+  width: 247px;
+  height: 46px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .product_cta_row span {
   font-size: 24px;
   font-weight: 600;

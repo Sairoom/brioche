@@ -133,6 +133,99 @@ const PRODUCT_CONTROLS_BY_SLUG: Record<string, ProductControlsConfig> = {
       },
     ],
   },
+  'cornflower-cake': {
+    pricePrefix: 'от ',
+    dateControl: {
+      id: 'deliveryDate',
+      ariaLabel: 'Выберите дату доставки',
+      placeholder: 'Выберите дату доставки *',
+      width: 253,
+    },
+    selectControls: [
+      {
+        id: 'flavor',
+        ariaLabel: 'Выберите вкус торта',
+        placeholder: 'Выберите вкус торта...',
+        defaultValue: 'Сливочно-сырный с вишней',
+        width: 281,
+        options: [
+          'Сливочно-сырный с вишней',
+          'Красный бархат',
+          'Ванильно-ореховый',
+          'Банан-карамель',
+          'Шоколадный пломбир',
+          'Морковный',
+          'Шоколадный манго-маракуйя',
+        ],
+      },
+      {
+        id: 'weight',
+        ariaLabel: 'Выберите вес торта',
+        placeholder: 'Выберите вес торта...',
+        width: 220,
+        options: ['1кг (диаметром 12см)', '2кг (диаметром 18см)', '4кг (диаметром 23см)'],
+      },
+    ],
+  },
+  'macaron-wreath-cake': {
+    pricePrefix: 'от ',
+    dateControl: {
+      id: 'deliveryDate',
+      ariaLabel: 'Выберите дату доставки',
+      placeholder: 'Выберите дату доставки *',
+      width: 253,
+    },
+    selectControls: [
+      {
+        id: 'flavor',
+        ariaLabel: 'Выберите вкус торта',
+        placeholder: 'Выберите вкус торта...',
+        defaultValue: 'Сливочно-сырный с вишней',
+        width: 281,
+        options: [
+          'Сливочно-сырный с вишней',
+          'Красный бархат',
+          'Ванильно-ореховый',
+          'Банан-карамель',
+          'Шоколадный пломбир',
+          'Морковный',
+          'Шоколадный манго-маракуйя',
+        ],
+      },
+      {
+        id: 'weight',
+        ariaLabel: 'Выберите вес торта',
+        placeholder: 'Выберите вес торта...',
+        width: 220,
+        options: ['1кг (диаметром 12см)', '2кг (диаметром 18см)', '4кг (диаметром 23см)'],
+      },
+      {
+        id: 'macaronFlavor',
+        ariaLabel: 'Выберите вкус макарон',
+        placeholder: 'Выберите вкус макарон...',
+        width: 247,
+        options: ['Ореховые', 'Ягодные'],
+      },
+    ],
+  },
+  'pavlova-wreath-cake': {
+    pricePrefix: 'от ',
+    dateControl: {
+      id: 'deliveryDate',
+      ariaLabel: 'Выберите дату доставки',
+      placeholder: 'Выберите дату доставки *',
+      width: 253,
+    },
+    selectControls: [
+      {
+        id: 'weight',
+        ariaLabel: 'Выберите вес торта',
+        placeholder: 'Выберите вес торта...',
+        width: 220,
+        options: ['1кг (диаметром 12см)', '2кг (диаметром 18см)', '4кг (диаметром 23см)'],
+      },
+    ],
+  },
   'dried-flowers-cake': {
     pricePrefix: 'от ',
     dateControl: {
@@ -167,8 +260,59 @@ const PRODUCT_CONTROLS_BY_SLUG: Record<string, ProductControlsConfig> = {
       },
     ],
   },
+  'bant-cake': {
+    pricePrefix: 'от ',
+    dateControl: {
+      id: 'deliveryDate',
+      ariaLabel: 'Выберите дату доставки',
+      placeholder: 'Выберите дату доставки *',
+      width: 253,
+    },
+    selectControls: [
+      {
+        id: 'flavor',
+        ariaLabel: 'Выберите вкус торта',
+        placeholder: 'Выберите вкус торта...',
+        defaultValue: 'Красный бархат',
+        width: 281,
+        options: [
+          'Красный бархат',
+          'Ванильно-ореховый',
+          'Банан-карамель',
+          'Шоколадный пломбир',
+          'Морковный',
+          'Шоколадный манго-маракуйя',
+          'Сливочно-сырный с вишней',
+        ],
+      },
+      {
+        id: 'weight',
+        ariaLabel: 'Выберите вес торта',
+        placeholder: 'Выберите вес торта...',
+        width: 220,
+        options: ['1кг (диаметром 12см)', '2кг (диаметром 18см)', '4кг (диаметром 23см)'],
+      },
+    ],
+  },
+  'cupcakes-box': {
+    pricePrefix: 'от ',
+    dateControl: {
+      id: 'deliveryDate',
+      ariaLabel: 'Выберите дату доставки',
+      placeholder: 'Выберите дату доставки *',
+      width: 253,
+    },
+    selectControls: [
+      {
+        id: 'quantity',
+        ariaLabel: 'Выберите количество капкейков',
+        placeholder: 'Выберите количество...',
+        width: 232,
+        options: ['4 капкейка', '6 капкейков', '9 капкейков'],
+      },
+    ],
+  },
 };
-
 const MONTH_NAMES = [
   'Январь',
   'Февраль',
@@ -190,10 +334,39 @@ const toStartOfDay = (date: Date): Date => new Date(date.getFullYear(), date.get
 const toStartOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), 1);
 const toEndOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth() + 1, 0);
 const addMonths = (date: Date, months: number): Date => new Date(date.getFullYear(), date.getMonth() + months, 1);
-const DYNAMIC_GALLERY_SLUGS = new Set(['dried-flowers-cake']);
+const DYNAMIC_GALLERY_SLUGS = new Set(['dried-flowers-cake', 'macaron-wreath-cake', 'pavlova-wreath-cake', 'bant-cake']);
 const RELATED_OFFSET_SLUGS = new Set(['lilac-cream-cake']);
 const DEFAULT_DYNAMIC_GALLERY_ASPECT_RATIO = 16 / 9;
 const MIN_ASPECT_RATIO = 0.1;
+const FORCED_16_BY_9_WIDTH = 690;
+const FORCED_16_BY_9_HEIGHT = 460;
+const ASPECT_RATIO_COMPARE_EPSILON = 0.01;
+const ASPECT_RATIO_OVERRIDES_BY_IMAGE: Record<string, number> = {
+  'venok-3.jpg': 16 / 9,
+  'pavlov2.jpg': 16 / 9,
+  'bant.jpg': 4 / 3,
+  'bant1.jpg': 16 / 9,
+  'bant2.jpg': 4 / 3,
+  'bant3.jpg': 4 / 3,
+  'bant4.jpg': 4 / 3,
+};
+
+const resolveAspectRatio = (imageUrl: string, fallbackRatio: number): number => {
+  const normalizedUrl = imageUrl.toLowerCase();
+
+  const forcedRatioEntry = Object.entries(ASPECT_RATIO_OVERRIDES_BY_IMAGE).find(([fileName]) =>
+    normalizedUrl.endsWith(`/${fileName}`) || normalizedUrl.endsWith(fileName),
+  );
+
+  if (forcedRatioEntry) {
+    return forcedRatioEntry[1];
+  }
+
+  return fallbackRatio;
+};
+
+const isSixteenByNineRatio = (ratio: number): boolean =>
+  Math.abs(ratio - DEFAULT_DYNAMIC_GALLERY_ASPECT_RATIO) <= ASPECT_RATIO_COMPARE_EPSILON;
 
 const toIsoDate = (date: Date): string => {
   const y = date.getFullYear();
@@ -309,7 +482,7 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
               image.onload = () => {
                 const width = image.naturalWidth || 0;
                 const height = image.naturalHeight || 0;
-                const ratio = width > 0 && height > 0 ? width / height : 1;
+                const ratio = resolveAspectRatio(imageUrl, width > 0 && height > 0 ? width / height : 1);
 
                 resolve([imageUrl, ratio]);
               };
@@ -408,7 +581,9 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
 
     const updateHeight = () => {
       const width = galleryEl.offsetWidth || 690;
-      const nextHeight = Math.round(width / selectedImageAspectRatio);
+      const nextHeight = isSixteenByNineRatio(selectedImageAspectRatio)
+        ? Math.round(width * (FORCED_16_BY_9_HEIGHT / FORCED_16_BY_9_WIDTH))
+        : Math.round(width / selectedImageAspectRatio);
 
       setGalleryMainHeight((previousHeight) => (previousHeight === nextHeight ? previousHeight : nextHeight));
     };
@@ -592,9 +767,9 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
     );
   }
 
-  const allergensText =
-    product.allergens.length > 0 ? `Аллергены: ${product.allergens.join(', ')}.` : null;
+  const allergensText = product.allergens.length > 0 ? `Аллергены: ${product.allergens.join(', ')}.` : null;
   const displayPrice = `${controlsConfig?.pricePrefix ?? ''}${product.price}`;
+  const isCompactCtaButton = product.slug === 'macaron-wreath-cake';
   const formattedDeliveryDate = deliveryDate
     ? deliveryDate.split('-').reverse().join('.')
     : controlsConfig?.dateControl?.placeholder ?? '';
@@ -771,7 +946,7 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
                             disabled={isCurrentMonthShown}
                             aria-label="Предыдущий месяц"
                           >
-                            ‹
+                            {'<'}
                           </button>
                           <div className="product_datepicker_title">{visibleMonthLabel}</div>
                           <button
@@ -781,7 +956,7 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
                             disabled={isMaxMonthShown}
                             aria-label="Следующий месяц"
                           >
-                            ›
+                            {'>'}
                           </button>
                         </div>
 
@@ -848,7 +1023,9 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
             ) : null}
 
             <div className={`product_cta_row${hasControls ? ' product_cta_row_with_addons' : ''}`}>
-              <button type="button">В корзину</button>
+              <button type="button" className={isCompactCtaButton ? 'product_cta_button_compact' : undefined}>
+                В корзину
+              </button>
               <span>{displayPrice}</span>
             </div>
           </article>

@@ -14,6 +14,16 @@ use Illuminate\Validation\Rule;
 class ProductController extends Controller
 {
     /**
+     * Legacy note snippets that should not be shown in product descriptions.
+     *
+     * @var array<int, string>
+     */
+    private const DEPRECATED_ALLERGY_NOTE_PHRASES = [
+        'Этот товар изготавливается на заказ минимум за 2 дня.',
+        'Если он нужен на ближайшее время, пожалуйста, свяжитесь с нашим менеджером.',
+    ];
+
+    /**
      * List products for catalog pages.
      */
     public function index(Request $request): JsonResponse
@@ -128,7 +138,7 @@ class ProductController extends Controller
             'slug' => $validated['slug'],
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
-            'allergy_note' => $validated['allergy_note'] ?? null,
+            'allergy_note' => $this->sanitizeAllergyNote($validated['allergy_note'] ?? null),
             'price' => $validated['price'],
             'main_image_url' => $validated['main_image_url'],
             'allergens' => $validated['allergens'] ?? [],
@@ -191,8 +201,8 @@ class ProductController extends Controller
         return [
             'id' => $product->id,
             'slug' => $product->slug,
-            'title' => $product->title,
-            'price' => $this->formatPrice($product->price),
+            'title' => $this->normalizeText($product->title),
+            'price' => $this->normalizeText($this->formatPrice($product->price)),
             'price_value' => (float) $product->price,
             'main_image_url' => $product->main_image_url,
         ];
@@ -209,10 +219,10 @@ class ProductController extends Controller
         return [
             'id' => $product->id,
             'slug' => $product->slug,
-            'title' => $product->title,
-            'description' => $product->description,
-            'allergy_note' => $product->allergy_note,
-            'price' => $this->formatPrice($product->price),
+            'title' => $this->normalizeText($product->title),
+            'description' => $this->normalizeNullableText($product->description),
+            'allergy_note' => $this->sanitizeAllergyNote($product->allergy_note),
+            'price' => $this->normalizeText($this->formatPrice($product->price)),
             'price_value' => (float) $product->price,
             'main_image_url' => $product->main_image_url,
             'gallery_images' => $product->images
@@ -223,13 +233,57 @@ class ProductController extends Controller
                 ->all(),
             'ingredients' => $product->ingredients
                 ->pluck('name')
+                ->map(fn (string $name): string => $this->normalizeText($name))
                 ->values()
                 ->all(),
-            'allergens' => array_values($product->allergens ?? []),
+            'allergens' => collect($product->allergens ?? [])
+                ->map(fn (mixed $allergen): string => $this->normalizeText((string) $allergen))
+                ->values()
+                ->all(),
             'related' => $relatedProducts
                 ->map(fn (Product $related): array => $this->transformProductCard($related))
                 ->values(),
         ];
+    }
+
+    private function sanitizeAllergyNote(?string $allergyNote): ?string
+    {
+        if ($allergyNote === null) {
+            return null;
+        }
+
+        $allergyNote = $this->normalizeText($allergyNote);
+        $sanitizedNote = str_replace(self::DEPRECATED_ALLERGY_NOTE_PHRASES, '', $allergyNote);
+        $sanitizedNote = preg_replace('/\s{2,}/u', ' ', trim((string) $sanitizedNote));
+
+        return $sanitizedNote !== '' ? $sanitizedNote : null;
+    }
+
+    private function normalizeNullableText(?string $value): ?string
+    {
+        return $value === null ? null : $this->normalizeText($value);
+    }
+
+    private function normalizeText(string $value): string
+    {
+        $value = trim($value);
+
+        if ($value === '') {
+            return $value;
+        }
+
+        // Legacy rows may contain UTF-8 text misread as Windows-1251 ("РЎ...", "С‹..." etc.).
+        // Decode only when uncommon Cyrillic extension letters are present to avoid touching normal Russian text.
+        if (! preg_match('/[\x{0402}-\x{040F}\x{0452}-\x{045F}]/u', $value)) {
+            return $value;
+        }
+
+        $decoded = @iconv('UTF-8', 'Windows-1251//IGNORE', $value);
+        if (! is_string($decoded) || $decoded === '') {
+            return $value;
+        }
+
+        return mb_check_encoding($decoded, 'UTF-8') ? $decoded : $value;
     }
 
     /**
@@ -237,6 +291,7 @@ class ProductController extends Controller
      */
     private function formatPrice(float|string $price): string
     {
-        return number_format((float) $price, 0, '.', ' ').' ₽';
+        return number_format((float) $price, 0, '.', ' ')." \u{20BD}";
     }
 }
+

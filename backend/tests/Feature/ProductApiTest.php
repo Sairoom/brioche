@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
 use Database\Seeders\ProductSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -51,5 +52,28 @@ class ProductApiTest extends TestCase
                     ],
                 ],
             ]);
+    }
+
+    public function test_it_decodes_mojibake_text_in_product_payload(): void
+    {
+        Product::query()->create([
+            'slug' => 'mojibake-check',
+            'title' => 'РўРµСЃС‚РѕРІС‹Р№ С‚РѕСЂС‚',
+            'description' => 'РћРїРёСЃР°РЅРёРµ С‚РѕРІР°СЂР°',
+            'allergy_note' => 'РџСЂРёРјРµС‡Р°РЅРёРµ',
+            'price' => 1234,
+            'main_image_url' => 'https://example.com/cake.jpg',
+            'allergens' => ['Р»Р°РєС‚РѕР·Р°'],
+            'is_active' => true,
+        ]);
+
+        $response = $this->getJson('/api/products/mojibake-check');
+
+        $response
+            ->assertOk()
+            ->assertJsonPath('data.title', 'Тестовый торт')
+            ->assertJsonPath('data.description', 'Описание товара')
+            ->assertJsonPath('data.allergy_note', 'Примечание')
+            ->assertJsonPath('data.allergens.0', 'лактоза');
     }
 }
