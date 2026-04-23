@@ -7,10 +7,10 @@
 }
 
 .main_hero img {
-  display: block;
+  display: flex;
+  object-fit: cover;
   width: 100%;
   height: calc(100vh - 206px);
-  object-fit: cover;
   object-position: 50% 38%;
 }
 

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import Layout from '../../components/layout/Layout';
 import './Main.scss';
-import Background from '../../assets/images/Main/Background.svg';
+import Background from '../../assets/images/Main/Background.png';
 import Siren from '../../assets/images/Main/siren.png';
 import Suxoch from '../../assets/images/Main/suxoch.png';
 import Mimosa from '../../assets/images/Main/mimosa.png';
