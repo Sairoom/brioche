@@ -113,12 +113,26 @@ class ProductSeeder extends Seeder
                 'description' => 'Капкейки на воздушном ванильном бисквите с клубничной начинкой, шапочкой всеми любимого сливочно-сырного крема и цветами. Неповторимый вкус, красота и любовь в каждой коробочке!',
                 'allergy_note' => '*Если у вас есть аллергия на какие-либо продукты, пожалуйста, укажите это в комментарии при оформлении заказа.',
                 'price' => 2600,
-                'main_image_url' => $assetBaseUrl.'/cupcakes-box-main.png',
+                'main_image_url' => $assetBaseUrl.'/cupcakes-box-main.jpg',
                 'gallery_images' => [
-                    $assetBaseUrl.'/cupcakes-box-1.png',
+                    $assetBaseUrl.'/cupcakes-box-1.jpg',
                 ],
                 'ingredients' => ['Ванильный бисквит', 'Клубничная начинка', 'Сливочно-сырный крем'],
                 'allergens' => ['лактоза', 'глютен'],
+            ],
+            [
+                'slug' => 'macaron-set',
+                'title' => 'Набор макарон',
+                'description' => 'В качестве наборов мы предлагаем 3 варианта: коробочку на 4 штуки, средний вариант на 8 штук и коробочку побольше на 15 макарон. Мы можем собрать ассорти на наше усмотрение, либо учесть Ваши пожелания по вкусам при наличии.',
+                'allergy_note' => '*Если у Вас есть аллергия на какие-либо продукты, пожалуйста, укажите это в комментарии при оформлении заказа.',
+                'price' => 1240,
+                'main_image_url' => $assetBaseUrl.'/macaron-main.jpg',
+                'gallery_images' => [
+                    $assetBaseUrl.'/macaron-1.jpg',
+                    $assetBaseUrl.'/macaron-2.jpg',
+                ],
+                'ingredients' => ['Миндальная мука', 'Яичный белок', 'Шоколадный ганаш'],
+                'allergens' => ['лактоза', 'орехи', 'глютен', 'цитрусовые', 'мед'],
             ],
             [
                 'slug' => 'breakfast-builder',
@@ -237,4 +251,3 @@ class ProductSeeder extends Seeder
         }
     }
 }
-

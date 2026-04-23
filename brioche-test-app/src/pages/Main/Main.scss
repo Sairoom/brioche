@@ -9,8 +9,9 @@
 .main_hero img {
   display: block;
   width: 100%;
-  min-height: 540px;
+  height: calc(100vh - 206px);
   object-fit: cover;
+  object-position: 50% 38%;
 }
 
 .main_products {

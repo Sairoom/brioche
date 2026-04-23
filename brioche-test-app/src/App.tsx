@@ -17,6 +17,9 @@ import ProductDetail from './pages/ProductDetail/ProductDetail';
 
 const App = () => {
   const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+  const productSlugAliases: Record<string, string> = {
+    'makaron-set': 'macaron-set',
+  };
 
   if (currentPath === '/delivery') {
     return <Delivery />;
@@ -75,7 +78,8 @@ const App = () => {
   }
 
   if (currentPath.startsWith('/products/')) {
-    const slug = decodeURIComponent(currentPath.slice('/products/'.length));
+    const rawSlug = decodeURIComponent(currentPath.slice('/products/'.length));
+    const slug = productSlugAliases[rawSlug] ?? rawSlug;
 
     if (slug) {
       return <ProductDetail slug={slug} />;

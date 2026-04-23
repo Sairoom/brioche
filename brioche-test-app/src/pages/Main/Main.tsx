@@ -12,8 +12,8 @@ import PavlovaCake from '../../assets/images/Main/pavl_cake.png';
 import Bant from '../../assets/images/Main/bant_cake.png';
 import Cupcakes from '../../assets/images/Main/cupcakes.png';
 import Macarons from '../../assets/images/Main/macarons.png';
-import LimonKul from '../../assets/images/Main/limon_kul.png';
-import KlubKul from '../../assets/images/Main/klub_kul.png';
+import BenedictPastrami from '../../assets/images/breakfast/benedict-pastrami.png';
+import Cappuccino200 from '../../assets/images/coffee/cappuccino-200.png';
 import sortIcon from '../../assets/images/Main/sort.svg';
 
 const parse_price = (value: string) => Number(value.replace(/[^\d]/g, ''));
@@ -34,10 +34,20 @@ const products: MainProduct[] = [
   { title: 'Торт с цветами', price: 'от 5,640 ₽', image: cakeFlowers, href: '/products/dried-flowers-cake' },
   { title: 'Торт Павлова. Венок', price: 'от 5,200 ₽', image: PavlovaCake, href: '/products/pavlova-wreath-cake' },
   { title: 'Торт с бантиками', price: 'от 4,850 ₽', image: Bant, href: '/products/bant-cake' },
-  { title: 'Коробка ванильных капкейков с цветами', price: 'от 2,600 ₽', image: Cupcakes, href: '/products/cupcakes-box' },
-  { title: 'Набор макарон', price: 'от 1,240 ₽', image: Macarons },
-  { title: 'Пасхальный кулич в меренге с лимонным курдом', price: '4,900 ₽', image: LimonKul },
-  { title: 'Пасхальный кулич с макароном и клубничным кремом', price: '6,500 ₽', image: KlubKul },
+  { title: 'Коробочка ванильных капкейков с цветами', price: 'от 2,600 ₽', image: Cupcakes, href: '/products/cupcakes-box' },
+  { title: 'Набор макарон', price: 'от 1,240 ₽', image: Macarons, href: '/products/macaron-set' },
+  {
+    title: 'Бенедикт с яйцом пашот, голландским соусом и пастрами из индейки',
+    price: '1,090 ₽',
+    image: BenedictPastrami,
+    href: '/products/benedict-pastrami',
+  },
+  {
+    title: 'Капучино 200 мл',
+    price: 'от 350 ₽',
+    image: Cappuccino200,
+    href: '/coffee',
+  },
 ];
 
 const productsBase = products.map((product, baseIndex) => ({
@@ -56,6 +66,7 @@ const Main = () => {
   const onNewClick = () => {
     if (sortType === 'new') {
       setNewReversed((prev) => !prev);
+
       return;
     }
 
@@ -66,6 +77,7 @@ const Main = () => {
   const onPriceClick = () => {
     if (sortType === 'price') {
       setPriceReversed((prev) => !prev);
+
       return;
     }
 
@@ -80,6 +92,7 @@ const Main = () => {
 
     if (sortType === 'price') {
       const sorted = [...productsBase].sort((a, b) => a.priceValue - b.priceValue);
+
       return priceReversed ? sorted.reverse() : sorted;
     }
 
@@ -145,7 +158,7 @@ const Main = () => {
           </div>
 
           <div className="main_more">
-            <a>Больше красоты</a>
+            <a href="/standard-cakes">Больше красоты</a>
           </div>
         </section>
       </main>

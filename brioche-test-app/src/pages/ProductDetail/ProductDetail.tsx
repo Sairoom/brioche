@@ -312,6 +312,17 @@ const PRODUCT_CONTROLS_BY_SLUG: Record<string, ProductControlsConfig> = {
       },
     ],
   },
+  'macaron-set': {
+    selectControls: [
+      {
+        id: 'quantity',
+        ariaLabel: 'Выберите набор макарон',
+        placeholder: 'Выберите набор...',
+        width: 247,
+        options: ['4 макарон', '8 макарон', '15 макарон'],
+      },
+    ],
+  },
 };
 const MONTH_NAMES = [
   'Январь',
@@ -334,7 +345,13 @@ const toStartOfDay = (date: Date): Date => new Date(date.getFullYear(), date.get
 const toStartOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), 1);
 const toEndOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth() + 1, 0);
 const addMonths = (date: Date, months: number): Date => new Date(date.getFullYear(), date.getMonth() + months, 1);
-const DYNAMIC_GALLERY_SLUGS = new Set(['dried-flowers-cake', 'macaron-wreath-cake', 'pavlova-wreath-cake', 'bant-cake']);
+const DYNAMIC_GALLERY_SLUGS = new Set([
+  'dried-flowers-cake',
+  'macaron-wreath-cake',
+  'pavlova-wreath-cake',
+  'bant-cake',
+  'cupcakes-box',
+]);
 const RELATED_OFFSET_SLUGS = new Set(['lilac-cream-cake']);
 const DEFAULT_DYNAMIC_GALLERY_ASPECT_RATIO = 16 / 9;
 const MIN_ASPECT_RATIO = 0.1;
@@ -349,6 +366,18 @@ const ASPECT_RATIO_OVERRIDES_BY_IMAGE: Record<string, number> = {
   'bant2.jpg': 4 / 3,
   'bant3.jpg': 4 / 3,
   'bant4.jpg': 4 / 3,
+};
+const PRICE_BY_QUANTITY_BY_SLUG: Record<string, Record<number, number>> = {
+  'cupcakes-box': {
+    4: 2600,
+    6: 3900,
+    9: 5850,
+  },
+  'macaron-set': {
+    4: 1240,
+    8: 2480,
+    15: 4650,
+  },
 };
 
 const resolveAspectRatio = (imageUrl: string, fallbackRatio: number): number => {
@@ -375,6 +404,8 @@ const toIsoDate = (date: Date): string => {
 
   return `${y}-${m}-${d}`;
 };
+
+const formatRubPrice = (price: number): string => `${price.toLocaleString('ru-RU')} ₽`;
 
 const fromIsoDate = (value: string): Date | null => {
   if (!value) {
@@ -768,7 +799,12 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
   }
 
   const allergensText = product.allergens.length > 0 ? `Аллергены: ${product.allergens.join(', ')}.` : null;
-  const displayPrice = `${controlsConfig?.pricePrefix ?? ''}${product.price}`;
+  const priceByQuantity = PRICE_BY_QUANTITY_BY_SLUG[product.slug];
+  const selectedQuantity = priceByQuantity ? Number((selectedControlValues.quantity ?? '').match(/\d+/)?.[0] ?? '') : null;
+  const selectedPrice = selectedQuantity !== null ? priceByQuantity?.[selectedQuantity] : undefined;
+  const hasSelectedPrice = selectedPrice !== undefined;
+  const displayPricePrefix = hasSelectedPrice ? '' : controlsConfig?.pricePrefix ?? '';
+  const displayPrice = `${displayPricePrefix}${hasSelectedPrice ? formatRubPrice(selectedPrice) : product.price}`;
   const isCompactCtaButton = product.slug === 'macaron-wreath-cake';
   const formattedDeliveryDate = deliveryDate
     ? deliveryDate.split('-').reverse().join('.')
