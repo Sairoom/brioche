@@ -421,6 +421,7 @@ const fromIsoDate = (value: string): Date | null => {
 };
 
 const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
+  const PRODUCT_LOAD_ERROR_MESSAGE = 'Не удалось загрузить товар.';
   const productGalleryRef = useRef<HTMLDivElement | null>(null);
   const galleryViewportRef = useRef<HTMLDivElement | null>(null);
   const galleryMainRef = useRef<HTMLDivElement | null>(null);
@@ -461,7 +462,13 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
         });
 
         if (!response.ok) {
-          throw new Error('Не удалось загрузить товар.');
+          if (response.status === 404) {
+            setProduct(null);
+
+            return;
+          }
+
+          throw new Error(PRODUCT_LOAD_ERROR_MESSAGE);
         }
 
         const payload = (await response.json()) as ProductResponse;
@@ -472,7 +479,7 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
         }
 
         setProduct(null);
-        setErrorMessage(error instanceof Error ? error.message : 'Не удалось загрузить товар.');
+        setErrorMessage(error instanceof Error ? error.message : PRODUCT_LOAD_ERROR_MESSAGE);
       } finally {
         if (!abortController.signal.aborted) {
           setIsLoading(false);
