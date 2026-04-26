@@ -17,7 +17,7 @@ import flatWhite200 from '../../assets/images/coffee/flat-white-200.png';
 import raf300 from '../../assets/images/coffee/raf-300.png';
 
 const products = [
-  { title: 'Капучино. 200 мл', price: 'от 350 ₽', image: cappuccino200 },
+  { title: 'Капучино. 200 мл', price: 'от 350 ₽', image: cappuccino200, href: '/products/cappuccino-200' },
   { title: 'Какао чили', price: '450 ₽', image: cocoaChili },
   { title: 'Латте андалиман', price: '450 ₽', image: latteAndaliman },
   { title: 'Американо. 150 мл', price: '290 ₽', image: americano150 },
@@ -41,7 +41,7 @@ const Coffee = () => (
         <div className="coffee_grid">
           {products.map((product) => (
             <article className="coffee_card" key={product.title}>
-              <a href="/">
+              <a href={'href' in product ? product.href : '/'}>
                 <div className="coffee_card_img_wrap">
                   <img src={product.image} alt={product.title} />
                 </div>

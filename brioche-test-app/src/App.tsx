@@ -13,6 +13,7 @@ import StandardCakes from './pages/StandardCakes/StandardCakes';
 import Coffee from './pages/Coffee/Coffee';
 import Tableware from './pages/Tableware/Tableware';
 import Cart from './pages/Cart/Cart';
+import Checkout from './pages/Checkout/Checkout';
 import ProductDetail from './pages/ProductDetail/ProductDetail';
 
 const App = () => {
@@ -75,6 +76,10 @@ const App = () => {
 
   if (currentPath === '/cart') {
     return <Cart />;
+  }
+
+  if (currentPath === '/checkout') {
+    return <Checkout />;
   }
 
   if (currentPath.startsWith('/products/')) {

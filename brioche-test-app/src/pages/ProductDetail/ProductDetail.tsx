@@ -9,6 +9,7 @@ import {
 import Layout from '../../components/layout/Layout';
 import sliderArrow from '../../assets/images/product-detail/slider-arrow.svg';
 import { API_BASE_URL } from '../../config/api';
+import { addCartItem } from '../../features/cart/cartStorage';
 import './ProductDetail.scss';
 
 type ProductCard = {
@@ -96,6 +97,18 @@ const PRODUCT_CONTROLS_BY_SLUG: Record<string, ProductControlsConfig> = {
         placeholder: 'Выберите заправку...',
         width: 281,
         options: ['апельсиновый соус', 'медово-горчичный соус'],
+      },
+    ],
+  },
+  'cappuccino-200': {
+    pricePrefix: 'от ',
+    selectControls: [
+      {
+        id: 'milk',
+        ariaLabel: 'Выберите молоко',
+        placeholder: 'Выберите молоко...',
+        width: 281,
+        options: ['Коровье', 'Безлактозное', 'Кокосовое', 'Миндальное'],
       },
     ],
   },
@@ -379,6 +392,16 @@ const PRICE_BY_QUANTITY_BY_SLUG: Record<string, Record<number, number>> = {
     15: 4650,
   },
 };
+const PRICE_BY_SELECT_OPTION_BY_CONTROL_BY_SLUG: Record<string, Record<string, Record<string, number>>> = {
+  'cappuccino-200': {
+    milk: {
+      'Коровье': 350,
+      'Безлактозное': 450,
+      'Кокосовое': 450,
+      'Миндальное': 450,
+    },
+  },
+};
 
 const resolveAspectRatio = (imageUrl: string, fallbackRatio: number): number => {
   const normalizedUrl = imageUrl.toLowerCase();
@@ -406,6 +429,16 @@ const toIsoDate = (date: Date): string => {
 };
 
 const formatRubPrice = (price: number): string => `${price.toLocaleString('ru-RU')} ₽`;
+
+const toCartOptionLabel = (ariaLabel: string): string => {
+  const withoutPrefix = ariaLabel.replace(/^Выберите\s+/i, '').trim();
+
+  if (!withoutPrefix) {
+    return ariaLabel;
+  }
+
+  return `${withoutPrefix.slice(0, 1).toLowerCase()}${withoutPrefix.slice(1)}`;
+};
 
 const fromIsoDate = (value: string): Date | null => {
   if (!value) {
@@ -808,14 +841,64 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
   const allergensText = product.allergens.length > 0 ? `Аллергены: ${product.allergens.join(', ')}.` : null;
   const priceByQuantity = PRICE_BY_QUANTITY_BY_SLUG[product.slug];
   const selectedQuantity = priceByQuantity ? Number((selectedControlValues.quantity ?? '').match(/\d+/)?.[0] ?? '') : null;
-  const selectedPrice = selectedQuantity !== null ? priceByQuantity?.[selectedQuantity] : undefined;
+  const selectedPriceByQuantity = selectedQuantity !== null ? priceByQuantity?.[selectedQuantity] : undefined;
+  const priceBySelectControl = PRICE_BY_SELECT_OPTION_BY_CONTROL_BY_SLUG[product.slug];
+  const selectedPriceBySelectControl = priceBySelectControl
+    ? Object.entries(priceBySelectControl).reduce<number | undefined>((price, [controlId, pricesByOption]) => {
+        if (price !== undefined) {
+          return price;
+        }
+
+        const selectedValue = selectedControlValues[controlId] ?? '';
+        return pricesByOption[selectedValue];
+      }, undefined)
+    : undefined;
+  const selectedPrice = selectedPriceByQuantity ?? selectedPriceBySelectControl;
   const hasSelectedPrice = selectedPrice !== undefined;
   const displayPricePrefix = hasSelectedPrice ? '' : controlsConfig?.pricePrefix ?? '';
   const displayPrice = `${displayPricePrefix}${hasSelectedPrice ? formatRubPrice(selectedPrice) : product.price}`;
+  const cartUnitPrice = hasSelectedPrice ? selectedPrice : product.price_value;
   const isCompactCtaButton = product.slug === 'macaron-wreath-cake';
   const formattedDeliveryDate = deliveryDate
     ? deliveryDate.split('-').reverse().join('.')
     : controlsConfig?.dateControl?.placeholder ?? '';
+  const cartOptions = [
+    ...selectControls.flatMap((control) => {
+      const selectedValue = selectedControlValues[control.id] ?? '';
+
+      if (!selectedValue) {
+        return [];
+      }
+
+      return [
+        {
+          id: control.id,
+          label: toCartOptionLabel(control.ariaLabel),
+          value: selectedValue,
+        },
+      ];
+    }),
+    ...(controlsConfig?.dateControl && deliveryDate
+      ? [
+          {
+            id: controlsConfig.dateControl.id,
+            label: toCartOptionLabel(controlsConfig.dateControl.ariaLabel),
+            value: formattedDeliveryDate,
+          },
+        ]
+      : []),
+  ];
+
+  const handleAddToCart = () => {
+    addCartItem({
+      productId: product.id,
+      slug: product.slug,
+      title: product.title,
+      imageUrl: product.main_image_url,
+      unitPrice: cartUnitPrice,
+      options: cartOptions,
+    });
+  };
 
   const isCurrentMonthShown =
     visibleMonthStart.getFullYear() === currentMonthStart.getFullYear() &&
@@ -882,7 +965,10 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
             <div
               ref={galleryMainRef}
               className={`product_gallery_main${
-                product.slug === 'toast-caviar' || product.slug === 'ikra' || product.slug === 'salad-avocado'
+                product.slug === 'toast-caviar' ||
+                product.slug === 'ikra' ||
+                product.slug === 'salad-avocado' ||
+                product.slug === 'cappuccino-200'
                   ? ' product_gallery_main_wide'
                   : ''
               }${hasDynamicGalleryHeight ? ' product_gallery_main_dynamic' : ''}`}
@@ -1066,7 +1152,11 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
             ) : null}
 
             <div className={`product_cta_row${hasControls ? ' product_cta_row_with_addons' : ''}`}>
-              <button type="button" className={isCompactCtaButton ? 'product_cta_button_compact' : undefined}>
+              <button
+                type="button"
+                className={isCompactCtaButton ? 'product_cta_button_compact' : undefined}
+                onClick={handleAddToCart}
+              >
                 В корзину
               </button>
               <span>{displayPrice}</span>

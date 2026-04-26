@@ -3,6 +3,7 @@ import phone from '../../assets/images/Header/phonev.svg';
 import tg from '../../assets/images/Header/tgv.svg';
 import korz from '../../assets/images/Header/korzv.svg';
 import arrow from '../../assets/images/Header/arrow.svg';
+import { useCartTotals } from '../../features/cart/cartStorage';
 
 const top_links = [
   { label: 'Как заказать?', href: '/how-to-order' },
@@ -42,6 +43,7 @@ const pasxa_path = '/pasxa';
 const Header = () => {
   const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
   const isPasxaPage = currentPath === '/pasxa';
+  const { totalItemsCount } = useCartTotals();
 
   return (
     <header className="header">
@@ -59,17 +61,25 @@ const Header = () => {
         </a>
 
         <div className="header_actions">
-          <a className="header_time">
+          <span className="header_time">
             с 9:00 до 22:00
-          </a>
+          </span>
           <button type="button">
-            <img src={phone} />
+            <img src={phone} alt="" />
           </button>
           <button type="button">
-            <img src={tg} />
+            <img src={tg} alt="" />
           </button>
-          <button type="button" onClick={() => { window.location.href = '/cart'; }} aria-label="Открыть корзину">
-            <img src={korz} />
+          <button
+            type="button"
+            className="header_cart_button"
+            onClick={() => {
+              window.location.href = '/cart';
+            }}
+            aria-label="Открыть корзину"
+          >
+            <img src={korz} alt="" />
+            {totalItemsCount > 0 ? <span className="header_cart_badge">{totalItemsCount}</span> : null}
           </button>
         </div>
       </div>
@@ -86,7 +96,7 @@ const Header = () => {
                 <>
                   <button className="menu_item_trigger" type="button">
                     {item.title}
-                    <img className="menu_item_arrow" src={arrow} />
+                    <img className="menu_item_arrow" src={arrow} alt="" />
                   </button>
                   <div className="menu_item_dropdown">
                     {item.links.map((link, linkIndex) => (

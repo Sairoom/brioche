@@ -46,7 +46,7 @@ const products: MainProduct[] = [
     title: 'Капучино 200 мл',
     price: 'от 350 ₽',
     image: Cappuccino200,
-    href: '/coffee',
+    href: '/products/cappuccino-200',
   },
 ];
 

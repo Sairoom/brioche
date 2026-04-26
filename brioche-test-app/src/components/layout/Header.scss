@@ -74,6 +74,26 @@
   cursor: pointer;
 }
 
+.header_cart_button {
+  position: relative;
+}
+
+.header_cart_badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #cd87af;
+  font-size: 10px;
+  line-height: 14px;
+  font-weight: 700;
+  text-align: center;
+  pointer-events: none;
+}
+
 .header_actions button + button {
   margin-left: 12px;
 }
