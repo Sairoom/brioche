@@ -1,19 +1,359 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Layout from '../../components/layout/Layout';
-import { formatRubles, useCartTotals } from '../../features/cart/cartStorage';
+import { API_BASE_URL } from '../../config/api';
+import { clearCartItems, formatRubles, useCartTotals } from '../../features/cart/cartStorage';
 import './Checkout.scss';
 
+type CheckoutStep = 2 | 3;
 type DeliveryMethod = 'pickup' | 'address';
 type RecipientType = 'self' | 'gift';
+type DeliveryTimeSlot = '' | '10:00-12:00' | '12:00-14:00' | '14:00-17:00' | '17:00-20:00' | '20:00-22:00';
+
+type OrderPayloadOption = {
+  id: string;
+  label: string;
+  value: string;
+};
+
+type OrderPayloadItem = {
+  product_id: number;
+  slug: string;
+  title: string;
+  unit_price: number;
+  quantity: number;
+  options: OrderPayloadOption[];
+};
+
+type OrderPayload = {
+  customer_name: string;
+  customer_phone: string;
+  recipient_type: RecipientType;
+  recipient_name: string | null;
+  recipient_phone: string | null;
+  delivery_method: DeliveryMethod;
+  delivery_address: string | null;
+  delivery_entrance: string | null;
+  delivery_floor: string | null;
+  delivery_apartment: string | null;
+  delivery_date: string;
+  delivery_time: string;
+  comment: string | null;
+  items: OrderPayloadItem[];
+};
+
+const MONTH_NAMES = [
+  'Январь',
+  'Февраль',
+  'Март',
+  'Апрель',
+  'Май',
+  'Июнь',
+  'Июль',
+  'Август',
+  'Сентябрь',
+  'Октябрь',
+  'Ноябрь',
+  'Декабрь',
+];
+
+const WEEKDAY_NAMES = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+const DELIVERY_TIME_OPTIONS: Exclude<DeliveryTimeSlot, ''>[] = [
+  '10:00-12:00',
+  '12:00-14:00',
+  '14:00-17:00',
+  '17:00-20:00',
+  '20:00-22:00',
+];
+
+const toStartOfDay = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+const toStartOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), 1);
+const toEndOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth() + 1, 0);
+const addMonths = (date: Date, months: number): Date => new Date(date.getFullYear(), date.getMonth() + months, 1);
+
+const toIsoDate = (date: Date): string => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+
+  return `${y}-${m}-${d}`;
+};
+
+const fromIsoDate = (value: string): Date | null => {
+  if (!value) {
+    return null;
+  }
+
+  const [y, m, d] = value.split('-').map(Number);
+  if (!y || !m || !d) {
+    return null;
+  }
+
+  return new Date(y, m - 1, d);
+};
 
 const Checkout = () => {
   const { items, totalPrice } = useCartTotals();
+  const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>(2);
+  const [orderNumber, setOrderNumber] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('address');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [deliveryEntrance, setDeliveryEntrance] = useState('');
+  const [deliveryFloor, setDeliveryFloor] = useState('');
+  const [deliveryApartment, setDeliveryApartment] = useState('');
+
   const [recipientType, setRecipientType] = useState<RecipientType>('self');
+  const [recipientName, setRecipientName] = useState('');
+  const [recipientPhone, setRecipientPhone] = useState('');
+
+  const [deliveryDate, setDeliveryDate] = useState('');
+  const [deliveryTime, setDeliveryTime] = useState<DeliveryTimeSlot>('');
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [detailsComment, setDetailsComment] = useState('');
+  const deliveryDateWrapRef = useRef<HTMLDivElement | null>(null);
+
+  const todayDate = useMemo(() => toStartOfDay(new Date()), []);
+  const currentMonthStart = useMemo(() => toStartOfMonth(todayDate), [todayDate]);
+  const maxDeliveryDate = useMemo(() => toStartOfDay(toEndOfMonth(addMonths(todayDate, 3))), [todayDate]);
+  const maxDeliveryMonthStart = useMemo(() => toStartOfMonth(maxDeliveryDate), [maxDeliveryDate]);
+  const [visibleMonthStart, setVisibleMonthStart] = useState<Date>(currentMonthStart);
 
   const hasItems = items.length > 0;
   const deliveryPrice = deliveryMethod === 'address' ? 800 : 0;
   const grandTotal = totalPrice + deliveryPrice;
+
+  const isCurrentMonthShown =
+    visibleMonthStart.getFullYear() === currentMonthStart.getFullYear() &&
+    visibleMonthStart.getMonth() === currentMonthStart.getMonth();
+  const isMaxMonthShown =
+    visibleMonthStart.getFullYear() === maxDeliveryMonthStart.getFullYear() &&
+    visibleMonthStart.getMonth() === maxDeliveryMonthStart.getMonth();
+
+  const visibleMonthLabel = `${MONTH_NAMES[visibleMonthStart.getMonth()]} ${visibleMonthStart.getFullYear()}`;
+  const leadingEmptyDays = (visibleMonthStart.getDay() + 6) % 7;
+  const monthDaysCount = new Date(visibleMonthStart.getFullYear(), visibleMonthStart.getMonth() + 1, 0).getDate();
+
+  const calendarCells = [
+    ...Array.from({ length: leadingEmptyDays }, (_, index) => ({
+      key: `empty-${index}`,
+      date: null as Date | null,
+    })),
+    ...Array.from({ length: monthDaysCount }, (_, index) => ({
+      key: `day-${index + 1}`,
+      date: new Date(visibleMonthStart.getFullYear(), visibleMonthStart.getMonth(), index + 1),
+    })),
+  ];
+
+  const formattedDeliveryDate = deliveryDate
+    ? deliveryDate.split('-').reverse().join('.')
+    : deliveryMethod === 'pickup'
+      ? 'В какой день заберете заказ?'
+      : 'В какой день доставить заказ?';
+
+  useEffect(() => {
+    setIsDatePickerOpen(false);
+  }, [deliveryMethod]);
+
+  useEffect(() => {
+    if (!isDatePickerOpen) {
+      return;
+    }
+
+    const onPointerDown = (event: MouseEvent) => {
+      const root = deliveryDateWrapRef.current;
+      if (!root) {
+        return;
+      }
+
+      if (event.target instanceof Node && !root.contains(event.target)) {
+        setIsDatePickerOpen(false);
+      }
+    };
+
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsDatePickerOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('keydown', onEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      window.removeEventListener('keydown', onEscape);
+    };
+  }, [isDatePickerOpen]);
+
+  useEffect(() => {
+    if (!deliveryDate) {
+      return;
+    }
+
+    const selectedDate = fromIsoDate(deliveryDate);
+    if (!selectedDate) {
+      return;
+    }
+
+    const selectedMonthStart = toStartOfMonth(selectedDate);
+    if (
+      selectedMonthStart.getFullYear() === visibleMonthStart.getFullYear() &&
+      selectedMonthStart.getMonth() === visibleMonthStart.getMonth()
+    ) {
+      return;
+    }
+
+    setVisibleMonthStart(selectedMonthStart);
+  }, [deliveryDate, visibleMonthStart]);
+
+  const goPrevMonth = () => {
+    if (isCurrentMonthShown) {
+      return;
+    }
+
+    setVisibleMonthStart(new Date(visibleMonthStart.getFullYear(), visibleMonthStart.getMonth() - 1, 1));
+  };
+
+  const goNextMonth = () => {
+    if (isMaxMonthShown) {
+      return;
+    }
+
+    setVisibleMonthStart(new Date(visibleMonthStart.getFullYear(), visibleMonthStart.getMonth() + 1, 1));
+  };
+
+  const selectDeliveryDate = (date: Date) => {
+    const normalizedDate = toStartOfDay(date);
+
+    if (normalizedDate.getTime() < todayDate.getTime() || normalizedDate.getTime() > maxDeliveryDate.getTime()) {
+      return;
+    }
+
+    setDeliveryDate(toIsoDate(normalizedDate));
+    setIsDatePickerOpen(false);
+  };
+
+  const validateForm = (): string | null => {
+    if (!hasItems) {
+      return 'Корзина пуста. Добавьте товары перед оформлением.';
+    }
+
+    if (!customerName.trim()) {
+      return 'Укажите ваше имя.';
+    }
+
+    if (!customerPhone.trim()) {
+      return 'Укажите ваш телефон.';
+    }
+
+    if (deliveryMethod === 'address' && !deliveryAddress.trim()) {
+      return 'Укажите улицу и номер дома для доставки.';
+    }
+
+    if (recipientType === 'gift') {
+      if (!recipientName.trim()) {
+        return 'Укажите имя получателя.';
+      }
+
+      if (!recipientPhone.trim()) {
+        return 'Укажите телефон получателя.';
+      }
+    }
+
+    if (!deliveryDate) {
+      return 'Выберите дату доставки.';
+    }
+
+    if (!deliveryTime) {
+      return 'Выберите время доставки.';
+    }
+
+    return null;
+  };
+
+  const handleSubmitOrder = async () => {
+    if (isSubmitting) {
+      return;
+    }
+
+    const validationError = validateForm();
+    if (validationError) {
+      setSubmitError(validationError);
+      return;
+    }
+
+    setSubmitError(null);
+    setIsSubmitting(true);
+
+    const payload: OrderPayload = {
+      customer_name: customerName.trim(),
+      customer_phone: customerPhone.trim(),
+      recipient_type: recipientType,
+      recipient_name: recipientType === 'gift' ? recipientName.trim() : null,
+      recipient_phone: recipientType === 'gift' ? recipientPhone.trim() : null,
+      delivery_method: deliveryMethod,
+      delivery_address: deliveryMethod === 'address' ? deliveryAddress.trim() : null,
+      delivery_entrance: deliveryMethod === 'address' && deliveryEntrance.trim() ? deliveryEntrance.trim() : null,
+      delivery_floor: deliveryMethod === 'address' && deliveryFloor.trim() ? deliveryFloor.trim() : null,
+      delivery_apartment: deliveryMethod === 'address' && deliveryApartment.trim() ? deliveryApartment.trim() : null,
+      delivery_date: deliveryDate,
+      delivery_time: deliveryTime.replace('-', ' — '),
+      comment: detailsComment.trim() ? detailsComment.trim() : null,
+      items: items.map((item) => ({
+        product_id: item.productId,
+        slug: item.slug,
+        title: item.title,
+        unit_price: item.unitPrice,
+        quantity: item.quantity,
+        options: item.options.map((option) => ({
+          id: option.id,
+          label: option.label,
+          value: option.value,
+        })),
+      })),
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      let responseJson: unknown = null;
+      try {
+        responseJson = await response.json();
+      } catch {
+        responseJson = null;
+      }
+
+      if (!response.ok) {
+        const errors = (responseJson as { errors?: Record<string, string[]> } | null)?.errors;
+        const firstValidationMessage = errors ? Object.values(errors).flat().find(Boolean) : null;
+        const fallbackMessage = (responseJson as { message?: string } | null)?.message;
+        throw new Error(firstValidationMessage ?? fallbackMessage ?? 'Не удалось оформить заказ.');
+      }
+
+      const nextOrderNumber =
+        (responseJson as { data?: { order?: { order_number?: string } } } | null)?.data?.order?.order_number ?? null;
+
+      setOrderNumber(typeof nextOrderNumber === 'string' ? nextOrderNumber : null);
+      setCheckoutStep(3);
+      clearCartItems();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Не удалось оформить заказ.';
+      setSubmitError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Layout>
@@ -26,19 +366,27 @@ const Checkout = () => {
                 <span className="checkout_step2_number">1</span>
                 <span>Ваша корзина</span>
               </li>
-              <li className="is_active">
+              <li className={checkoutStep === 2 ? 'is_active' : undefined}>
                 <span className="checkout_step2_number">2</span>
                 <span>Доставка и оплата</span>
               </li>
-              <li>
+              <li className={checkoutStep === 3 ? 'is_active' : undefined}>
                 <span className="checkout_step2_number">3</span>
                 <span>Завершение покупки</span>
               </li>
             </ol>
           </aside>
 
-          <article className="checkout_step2_main">
-            {!hasItems ? (
+          <article className={`checkout_step2_main${checkoutStep === 3 ? ' checkout_step2_main_step3' : ''}`}>
+            {checkoutStep === 3 ? (
+              <section className="checkout_step3_success">
+                <h2>Заказ оформлен, ожидайте звонка менеджера</h2>
+                {orderNumber ? <p>Номер заказа: {orderNumber}</p> : null}
+                <a className="checkout_btn checkout_btn_next" href="/">
+                  На главную
+                </a>
+              </section>
+            ) : !hasItems ? (
               <>
                 <p className="checkout_step2_empty">Ваша корзина пуста. Добавьте товары, чтобы перейти к оформлению.</p>
                 <a className="checkout_step2_back" href="/cart">
@@ -50,8 +398,18 @@ const Checkout = () => {
                 <section className="checkout_block">
                   <h2>Контактные данные</h2>
                   <div className="checkout_contact_row">
-                    <input type="text" placeholder="Ваше имя *" />
-                    <input type="tel" placeholder="Ваш телефон *" />
+                    <input
+                      type="text"
+                      placeholder="Ваше имя *"
+                      value={customerName}
+                      onChange={(event) => setCustomerName(event.target.value)}
+                    />
+                    <input
+                      type="tel"
+                      placeholder="Ваш телефон *"
+                      value={customerPhone}
+                      onChange={(event) => setCustomerPhone(event.target.value)}
+                    />
                   </div>
                 </section>
 
@@ -87,12 +445,122 @@ const Checkout = () => {
 
                   {deliveryMethod === 'address' ? (
                     <div className="checkout_address_row">
-                      <input type="text" placeholder="Улица и номер дома *" />
-                      <input type="number" placeholder="Подъезд" />
-                      <input type="number" placeholder="Этаж" />
-                      <input type="number" placeholder="Квартира" />
+                      <input
+                        type="text"
+                        placeholder="Улица и номер дома *"
+                        value={deliveryAddress}
+                        onChange={(event) => setDeliveryAddress(event.target.value)}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Подъезд"
+                        value={deliveryEntrance}
+                        onChange={(event) => setDeliveryEntrance(event.target.value)}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Этаж"
+                        value={deliveryFloor}
+                        onChange={(event) => setDeliveryFloor(event.target.value)}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Квартира"
+                        value={deliveryApartment}
+                        onChange={(event) => setDeliveryApartment(event.target.value)}
+                      />
                     </div>
                   ) : null}
+
+                  <div className="checkout_pickup_controls">
+                    <div ref={deliveryDateWrapRef} className="checkout_pickup_date_wrap">
+                      <button
+                        type="button"
+                        className={`checkout_pickup_date_trigger${deliveryDate ? ' is_filled' : ''}${
+                          isDatePickerOpen ? ' is_open' : ''
+                        }`}
+                        onClick={() => setIsDatePickerOpen((prev) => !prev)}
+                        aria-haspopup="dialog"
+                        aria-expanded={isDatePickerOpen}
+                        aria-controls="checkout-delivery-datepicker"
+                        aria-label="Выберите день доставки"
+                      >
+                        {formattedDeliveryDate}
+                      </button>
+
+                      {isDatePickerOpen ? (
+                        <div id="checkout-delivery-datepicker" className="checkout_datepicker" role="dialog">
+                          <div className="checkout_datepicker_header">
+                            <button
+                              type="button"
+                              className="checkout_datepicker_nav"
+                              onClick={goPrevMonth}
+                              disabled={isCurrentMonthShown}
+                              aria-label="Предыдущий месяц"
+                            >
+                              {'<'}
+                            </button>
+                            <div className="checkout_datepicker_title">{visibleMonthLabel}</div>
+                            <button
+                              type="button"
+                              className="checkout_datepicker_nav"
+                              onClick={goNextMonth}
+                              disabled={isMaxMonthShown}
+                              aria-label="Следующий месяц"
+                            >
+                              {'>'}
+                            </button>
+                          </div>
+
+                          <div className="checkout_datepicker_weekdays">
+                            {WEEKDAY_NAMES.map((day) => (
+                              <span key={day}>{day}</span>
+                            ))}
+                          </div>
+
+                          <div className="checkout_datepicker_days">
+                            {calendarCells.map((cell) => {
+                              if (!cell.date) {
+                                return <span key={cell.key} className="checkout_datepicker_day_empty" />;
+                              }
+
+                              const normalizedDate = toStartOfDay(cell.date);
+                              const isDisabled =
+                                normalizedDate.getTime() < todayDate.getTime() ||
+                                normalizedDate.getTime() > maxDeliveryDate.getTime();
+                              const isSelected = deliveryDate === toIsoDate(normalizedDate);
+
+                              return (
+                                <button
+                                  key={cell.key}
+                                  type="button"
+                                  className={`checkout_datepicker_day${isSelected ? ' is_selected' : ''}`}
+                                  onClick={() => selectDeliveryDate(normalizedDate)}
+                                  disabled={isDisabled}
+                                >
+                                  {normalizedDate.getDate()}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+
+                    <select
+                      className="checkout_pickup_time"
+                      value={deliveryTime}
+                      onChange={(event) => setDeliveryTime(event.target.value as DeliveryTimeSlot)}
+                      aria-label="Выберите время доставки"
+                    >
+                      <option value="">Выберите время...</option>
+                      {DELIVERY_TIME_OPTIONS.map((time) => (
+                        <option key={time} value={time}>
+                          {time.replace('-', ' — ')}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
                   <div className="checkout_radio_column">
                     <label>
@@ -117,11 +585,32 @@ const Checkout = () => {
                       Заказываю в подарок *
                     </label>
                   </div>
+
+                  {recipientType === 'gift' ? (
+                    <div className="checkout_gift_row">
+                      <input
+                        type="text"
+                        placeholder="Имя получателя *"
+                        value={recipientName}
+                        onChange={(event) => setRecipientName(event.target.value)}
+                      />
+                      <input
+                        type="tel"
+                        placeholder="Телефон получателя *"
+                        value={recipientPhone}
+                        onChange={(event) => setRecipientPhone(event.target.value)}
+                      />
+                    </div>
+                  ) : null}
                 </section>
 
-                <section className="checkout_block">
+                <section className="checkout_block checkout_details_block">
                   <h2>Детали</h2>
-                  <textarea placeholder="Если у вас есть дополнительные пожелания к заказу, пожалуйста, опишите их в этом поле." />
+                  <textarea
+                    placeholder="Если у вас есть дополнительные пожелания к заказу, пожалуйста, опишите их в этом поле."
+                    value={detailsComment}
+                    onChange={(event) => setDetailsComment(event.target.value)}
+                  />
                 </section>
 
                 <section className="checkout_block checkout_summary">
@@ -174,12 +663,14 @@ const Checkout = () => {
                   </label>
                 </section>
 
+                {submitError ? <p className="checkout_form_error">{submitError}</p> : null}
+
                 <div className="checkout_actions">
                   <a href="/cart" className="checkout_btn checkout_btn_back">
                     ← Назад
                   </a>
-                  <button type="button" className="checkout_btn checkout_btn_next">
-                    Продолжить
+                  <button type="button" className="checkout_btn checkout_btn_next" onClick={handleSubmitOrder} disabled={isSubmitting}>
+                    {isSubmitting ? 'Оформляем...' : 'Оформить заказ'}
                   </button>
                 </div>
               </>

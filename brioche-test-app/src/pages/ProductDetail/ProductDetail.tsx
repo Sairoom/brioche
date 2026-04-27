@@ -967,7 +967,6 @@ const ProductDetail = ({ slug = 'benedict-pastrami' }: ProductDetailProps) => {
               className={`product_gallery_main${
                 product.slug === 'toast-caviar' ||
                 product.slug === 'ikra' ||
-                product.slug === 'salad-avocado' ||
                 product.slug === 'cappuccino-200'
                   ? ' product_gallery_main_wide'
                   : ''

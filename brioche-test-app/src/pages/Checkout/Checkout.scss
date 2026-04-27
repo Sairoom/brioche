@@ -78,6 +78,10 @@
   padding: 42px 36px 42px;
 }
 
+.checkout_step2_main_step3 {
+  min-height: 260px;
+}
+
 .checkout_step2_empty {
   margin: 0;
   font-size: 16px;
@@ -91,13 +95,31 @@
   text-decoration: underline;
 }
 
+.checkout_step3_success {
+  max-width: 620px;
+}
+
+.checkout_step3_success h2 {
+  margin: 0 0 14px;
+  font-size: 28px;
+  line-height: 1.25;
+  color: #1a1a1a;
+}
+
+.checkout_step3_success p {
+  margin: 0 0 24px;
+  font-size: 18px;
+  line-height: 1.3;
+  color: #556170;
+}
+
 .checkout_block + .checkout_block {
   margin-top: 34px;
 }
 
 .checkout_block h2 {
   margin: 0 0 16px;
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.2;
   color: #101010;
   font-weight: 600;
@@ -144,8 +166,12 @@
 
 .checkout_delivery_head {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 16px;
+}
+
+.checkout_delivery_head h2 {
+  margin-bottom: 20px;
 }
 
 .checkout_delivery_head a {
@@ -180,8 +206,42 @@
   width: 24px;
   height: 24px;
   margin: 0;
-  accent-color: #cd87af;
   cursor: pointer;
+}
+
+.checkout_radio_row input[type='radio'],
+.checkout_radio_column input[type='radio'],
+.checkout_payment_option input[type='radio'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  flex: 0 0 24px;
+  box-sizing: border-box;
+  border: 1px solid #d7d7d7;
+  border-radius: 50%;
+  background: #ffffff;
+  display: grid;
+  place-content: center;
+}
+
+.checkout_radio_row input[type='radio']::before,
+.checkout_radio_column input[type='radio']::before,
+.checkout_payment_option input[type='radio']::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.15s ease;
+  background: #cd87af;
+}
+
+.checkout_radio_row input[type='radio']:checked::before,
+.checkout_radio_column input[type='radio']:checked::before,
+.checkout_payment_option input[type='radio']:checked::before {
+  transform: scale(1);
 }
 
 .checkout_address_row {
@@ -191,12 +251,194 @@
   gap: 13px;
 }
 
+.checkout_pickup_controls {
+  margin-top: 22px;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.checkout_pickup_date_wrap {
+  position: relative;
+  width: 392px;
+}
+
+.checkout_pickup_date_trigger,
+.checkout_pickup_time {
+  width: 100%;
+  height: 45px;
+  border: 1px solid #cdcdcd;
+  border-radius: 3px;
+  box-sizing: border-box;
+  background: #f9f9f9;
+  color: #5e6770;
+  font-size: 16px;
+  font-family: inherit;
+  line-height: 1.35;
+  padding: 0 22px;
+  outline: none;
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.checkout_pickup_date_trigger {
+  text-align: left;
+  cursor: pointer;
+}
+
+.checkout_pickup_date_trigger.is_open,
+.checkout_pickup_date_trigger:focus-visible,
+.checkout_pickup_time:focus {
+  border-color: #cd87af;
+  box-shadow: 0 0 0 1px rgba(205, 135, 175, 0.22);
+}
+
+.checkout_pickup_time {
+  width: 245px;
+  cursor: pointer;
+}
+
+.checkout_datepicker {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 30;
+  width: 332px;
+  border: 1px solid #d0d0d0;
+  border-top-color: #cd87af;
+  background: #fafafa;
+}
+
+.checkout_datepicker::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 18px;
+  width: 12px;
+  height: 12px;
+  border-left: 1px solid #cd87af;
+  border-top: 1px solid #cd87af;
+  background: #fafafa;
+  transform: rotate(45deg);
+}
+
+.checkout_datepicker_header {
+  height: 34px;
+  display: grid;
+  grid-template-columns: 34px 1fr 34px;
+  align-items: center;
+  border-bottom: 1px solid #ececec;
+}
+
+.checkout_datepicker_title {
+  text-align: center;
+  color: #6f7480;
+  font-size: 16px;
+  line-height: 34px;
+}
+
+.checkout_datepicker_nav {
+  border: 0;
+  background: transparent;
+  color: #b7bdc4;
+  font-size: 24px;
+  height: 34px;
+  cursor: pointer;
+}
+
+.checkout_datepicker_nav:disabled {
+  color: #d6dde3;
+  cursor: default;
+}
+
+.checkout_datepicker_weekdays {
+  margin: 10px 15px 0;
+  display: grid;
+  grid-template-columns: repeat(7, 43px);
+}
+
+.checkout_datepicker_weekdays span {
+  color: #c0c0c0;
+  font-size: 16px;
+  line-height: 34px;
+  text-align: center;
+}
+
+.checkout_datepicker_days {
+  margin: 4px 15px 14px;
+  display: grid;
+  grid-template-columns: repeat(7, 43px);
+}
+
+.checkout_datepicker_day,
+.checkout_datepicker_day_empty {
+  width: 43px;
+  height: 43px;
+  border: 0;
+  background: transparent;
+  font-size: 16px;
+  line-height: 43px;
+  text-align: center;
+  color: #7a8590;
+}
+
+.checkout_datepicker_day {
+  cursor: pointer;
+}
+
+.checkout_datepicker_day:hover {
+  background: rgba(205, 135, 175, 0.14);
+}
+
+.checkout_datepicker_day.is_selected {
+  background: transparent;
+  color: #4b5561;
+  font-weight: 500;
+}
+
+.checkout_datepicker_day:disabled {
+  color: #c8c8c8;
+  cursor: default;
+}
+
+.checkout_datepicker_day:disabled:hover {
+  background: transparent;
+}
+
 .checkout_radio_column {
   margin-top: 22px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 14px;
+}
+
+.checkout_gift_row {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(2, 293.6px);
+  gap: 24px;
+}
+
+.checkout_gift_row input {
+  width: 293.6px;
+  height: 44px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  background: #fafafa;
+}
+
+.checkout_block.checkout_details_block {
+  margin-top: 24px;
+  clear: both;
+}
+
+.checkout_form_error {
+  margin: 16px 0 0;
+  color: #bf4b4b;
+  font-size: 15px;
+  line-height: 1.3;
 }
 
 .checkout_summary_rows {
@@ -221,7 +463,7 @@
 }
 
 .checkout_summary_title {
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1.35;
   color: #3e4856;
 }
@@ -252,7 +494,7 @@
   column-gap: 20px;
   padding: 16px 0;
   border-bottom: 1px solid #ececec;
-  font-size: 18px;
+  font-size: 14px;
   line-height: 1.3;
   color: #3f4d5e;
 }
@@ -317,6 +559,11 @@
   background-size: 100% 100%;
 }
 
+.checkout_btn:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
 .checkout_btn_back {
   --btn-color: #777;
 }
@@ -339,8 +586,27 @@
     grid-template-columns: 1fr;
   }
 
+  .checkout_gift_row {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout_gift_row input {
+    width: 100%;
+  }
+
   .checkout_address_row {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .checkout_pickup_controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .checkout_pickup_date_wrap,
+  .checkout_pickup_time {
+    width: 100%;
   }
 
   .checkout_summary_head,
