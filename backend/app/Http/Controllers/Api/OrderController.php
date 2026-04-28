@@ -19,17 +19,17 @@ class OrderController extends Controller
     {
         $validated = $request->validate([
             'customer_name' => ['required', 'string', 'max:255'],
-            'customer_phone' => ['required', 'string', 'max:60'],
+            'customer_phone' => ['required', 'string', 'max:60', 'regex:/^\+7\s\d{3}\s\d{3}\s\d{2}\s\d{2}$/'],
 
             'recipient_type' => ['required', 'string', Rule::in(['self', 'gift'])],
             'recipient_name' => ['nullable', 'required_if:recipient_type,gift', 'string', 'max:255'],
-            'recipient_phone' => ['nullable', 'required_if:recipient_type,gift', 'string', 'max:60'],
+            'recipient_phone' => ['nullable', 'required_if:recipient_type,gift', 'string', 'max:60', 'regex:/^\+7\s\d{3}\s\d{3}\s\d{2}\s\d{2}$/'],
 
             'delivery_method' => ['required', 'string', Rule::in(['pickup', 'address'])],
             'delivery_address' => ['nullable', 'required_if:delivery_method,address', 'string', 'max:255'],
-            'delivery_entrance' => ['nullable', 'string', 'max:30'],
-            'delivery_floor' => ['nullable', 'string', 'max:30'],
-            'delivery_apartment' => ['nullable', 'string', 'max:30'],
+            'delivery_entrance' => ['nullable', 'string', 'max:30', 'regex:/^\d+$/'],
+            'delivery_floor' => ['nullable', 'string', 'max:30', 'regex:/^\d+$/'],
+            'delivery_apartment' => ['nullable', 'string', 'max:30', 'regex:/^\d+$/'],
             'delivery_date' => ['required', 'date_format:Y-m-d'],
             'delivery_time' => ['required', 'string', 'max:60'],
 
@@ -134,4 +134,3 @@ class OrderController extends Controller
         return $candidate;
     }
 }
-

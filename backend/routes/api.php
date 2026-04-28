@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ReservationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{slug}', [ProductController::class, 'show']);
 Route::post('/orders', [OrderController::class, 'store']);
+Route::post('/reservations', [ReservationController::class, 'store']);
 
 Route::prefix('admin')->group(function (): void {
     Route::get('/products', [ProductController::class, 'index']);

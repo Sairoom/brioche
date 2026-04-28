@@ -91,6 +91,32 @@ const fromIsoDate = (value: string): Date | null => {
   return new Date(y, m - 1, d);
 };
 
+const formatPhoneRu = (value: string): string => {
+  const digits = value.replace(/\D/g, '');
+  const normalized = digits.startsWith('7') ? digits : `7${digits}`;
+  const limited = normalized.slice(0, 11);
+  const d = limited.slice(1);
+
+  let result = '+7';
+  if (d.length > 0) {
+    result += ` ${d.slice(0, 3)}`;
+  }
+  if (d.length > 3) {
+    result += ` ${d.slice(3, 6)}`;
+  }
+  if (d.length > 6) {
+    result += ` ${d.slice(6, 8)}`;
+  }
+  if (d.length > 8) {
+    result += ` ${d.slice(8, 10)}`;
+  }
+
+  return result;
+};
+
+const isValidRuPhone = (value: string): boolean => /^\+7 \d{3} \d{3} \d{2} \d{2}$/.test(value.trim());
+const onlyDigits = (value: string): string => value.replace(/\D/g, '');
+
 const Checkout = () => {
   const { items, totalPrice } = useCartTotals();
   const [checkoutStep, setCheckoutStep] = useState<CheckoutStep>(2);
@@ -250,6 +276,9 @@ const Checkout = () => {
     if (!customerPhone.trim()) {
       return 'Укажите ваш телефон.';
     }
+    if (!isValidRuPhone(customerPhone)) {
+      return 'Телефон должен быть в формате +7 XXX XXX XX XX.';
+    }
 
     if (deliveryMethod === 'address' && !deliveryAddress.trim()) {
       return 'Укажите улицу и номер дома для доставки.';
@@ -262,6 +291,9 @@ const Checkout = () => {
 
       if (!recipientPhone.trim()) {
         return 'Укажите телефон получателя.';
+      }
+      if (!isValidRuPhone(recipientPhone)) {
+        return 'Телефон получателя должен быть в формате +7 XXX XXX XX XX.';
       }
     }
 
@@ -406,9 +438,9 @@ const Checkout = () => {
                     />
                     <input
                       type="tel"
-                      placeholder="Ваш телефон *"
+                      placeholder="+7 999 123 45 67 *"
                       value={customerPhone}
-                      onChange={(event) => setCustomerPhone(event.target.value)}
+                      onChange={(event) => setCustomerPhone(formatPhoneRu(event.target.value))}
                     />
                   </div>
                 </section>
@@ -455,19 +487,19 @@ const Checkout = () => {
                         type="text"
                         placeholder="Подъезд"
                         value={deliveryEntrance}
-                        onChange={(event) => setDeliveryEntrance(event.target.value)}
+                        onChange={(event) => setDeliveryEntrance(onlyDigits(event.target.value))}
                       />
                       <input
                         type="text"
                         placeholder="Этаж"
                         value={deliveryFloor}
-                        onChange={(event) => setDeliveryFloor(event.target.value)}
+                        onChange={(event) => setDeliveryFloor(onlyDigits(event.target.value))}
                       />
                       <input
                         type="text"
                         placeholder="Квартира"
                         value={deliveryApartment}
-                        onChange={(event) => setDeliveryApartment(event.target.value)}
+                        onChange={(event) => setDeliveryApartment(onlyDigits(event.target.value))}
                       />
                     </div>
                   ) : null}
@@ -596,9 +628,9 @@ const Checkout = () => {
                       />
                       <input
                         type="tel"
-                        placeholder="Телефон получателя *"
+                        placeholder="+7 999 123 45 67 *"
                         value={recipientPhone}
-                        onChange={(event) => setRecipientPhone(event.target.value)}
+                        onChange={(event) => setRecipientPhone(formatPhoneRu(event.target.value))}
                       />
                     </div>
                   ) : null}
